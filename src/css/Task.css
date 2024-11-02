@@ -9,12 +9,13 @@
   
   /* Container for all task columns */
   .tasks {
-    display: inline-flex;
+    display: flex;
     gap: 24px;
     padding: 10px 0;
     align-items: flex-start;
   }
-
+  
+  /* Styling for the create new task column button */
   .create-task-box {
     display: flex;
     justify-content: center;
@@ -35,11 +36,10 @@
     background-color: rgba(200, 200, 200, 0.5); /* Darker tint on hover */
   }
   
-  
   /* Styling for each task column */
   .task-column {
     min-width: 280px;
-    max-width: 300px; /* Ensure max width to prevent overflow */
+    max-width: 300px;
     min-height: 600px;
     background-color: #ffffff;
     border: 2px solid #C1C1C1; /* Border */
@@ -99,32 +99,6 @@
     max-width: 100%; /* Ensure ticket fits within task column */
     word-wrap: break-word; /* Handle overflow for long text */
   }
-
-  .ticket-form {
-    display: flex;
-    gap: 20px;
-  }
-  
-  .form-column {
-    flex: 1;
-  }
-  
-  .form-column.left {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  .form-column.right {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  /* Adjust spacing for dropdown and select fields */
-  .difficulty-select, .dropdown, input[type="text"], textarea {
-    width: 100%;
-  }  
   
   .ticket:hover {
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
@@ -293,7 +267,7 @@
   }
   
   /* Styling for user dropdown options */
-.user-option {
+  .user-option {
     display: flex;
     align-items: center;
     padding: 5px;
@@ -324,6 +298,7 @@
     color: #333;
   }
   
+  /* Delete zone styling */
   .delete-zone {
     transition: opacity 0.3s ease, background-color 0.3s ease;
     opacity: 0;

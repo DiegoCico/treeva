@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase.js';
-import { collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc } from 'firebase/firestore';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { collection, doc, getDoc, getDocs, setDoc, updateDoc } from 'firebase/firestore';
+import { DndProvider, useDrag, useDrop } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import Modal from './Modal';
 import Ticket from './Ticket';
 import Dropdown from './Dropdown';
 import '../css/Task.css';
+
+const ItemTypes = {
+  TICKET: 'TICKET',
+};
 
 const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
   const [tasks, setTasks] = useState([]);
@@ -21,20 +26,18 @@ const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
     difficulty: '',
   });
 
+  // Fetch tasks and users data from Firebase
   useEffect(() => {
     const fetchTasks = async () => {
       try {
         const tasksRef = collection(db, `workspace/${workspaceCode}/sprints/${sprintId}/tasks`);
         const tasksSnapshot = await getDocs(tasksRef);
-
         let taskData = tasksSnapshot.docs.map((taskDoc) => ({
           id: taskDoc.id,
           ...taskDoc.data(),
           tickets: taskDoc.data().tickets || [],
         }));
-
         taskData.sort((a, b) => a.order - b.order);
-
         setTasks(taskData);
       } catch (error) {
         console.error("Error fetching tasks:", error);
@@ -45,7 +48,6 @@ const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
       try {
         const workspaceDocRef = doc(db, `workspace/${workspaceCode}`);
         const workspaceDoc = await getDoc(workspaceDocRef);
-
         if (workspaceDoc.exists()) {
           const members = workspaceDoc.data().members || [];
           const usersPromises = members.map(async (userId) => {
@@ -64,27 +66,6 @@ const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
     fetchUsers();
   }, [workspaceCode, sprintId]);
 
-  const updateTaskOrderInFirebase = async (tasks) => {
-    try {
-      const updatePromises = tasks.map((task, index) => {
-        const taskRef = doc(db, `workspace/${workspaceCode}/sprints/${sprintId}/tasks`, task.id);
-        return updateDoc(taskRef, { order: index });
-      });
-      await Promise.all(updatePromises);
-    } catch (error) {
-      console.error("Error updating task order:", error);
-    }
-  };
-
-  const deleteTaskInFirebase = async (taskId) => {
-    try {
-      const taskRef = doc(db, `workspace/${workspaceCode}/sprints/${sprintId}/tasks`, taskId);
-      await deleteDoc(taskRef);
-    } catch (error) {
-      console.error("Error deleting task:", error);
-    }
-  };
-
   const createNewColumn = async () => {
     const newTask = {
       title: `New Column ${tasks.length + 1}`,
@@ -92,7 +73,7 @@ const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
       tickets: [],
       order: tasks.length,
     };
-
+  
     try {
       const newTaskRef = doc(collection(db, `workspace/${workspaceCode}/sprints/${sprintId}/tasks`));
       await setDoc(newTaskRef, newTask);
@@ -102,28 +83,83 @@ const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
     }
   };
 
-  const onDragEnd = (result) => {
-    const { source, destination } = result;
-
-    if (!destination) return;
-
-    if (destination.droppableId === "delete-zone") {
-      const taskToDelete = tasks[source.index];
-      if (taskToDelete.title !== "To Do" && taskToDelete.title !== "Closed") {
-        setTasks(tasks.filter((task) => task.id !== taskToDelete.id));
-        deleteTaskInFirebase(taskToDelete.id);
-      }
-      return;
+  const updateTaskTicketsInFirebase = async (taskId, tickets) => {
+    try {
+      const taskRef = doc(db, `workspace/${workspaceCode}/sprints/${sprintId}/tasks`, taskId);
+      await updateDoc(taskRef, { tickets });
+    } catch (error) {
+      console.error("Error updating task tickets:", error);
     }
-
-    const reorderedTasks = Array.from(tasks);
-    const [movedTask] = reorderedTasks.splice(source.index, 1);
-    reorderedTasks.splice(destination.index, 0, movedTask);
-
-    setTasks(reorderedTasks);
-    updateTaskOrderInFirebase(reorderedTasks);
   };
 
+  const TaskColumn = ({ task }) => {
+    const [, ref] = useDrop({
+      accept: ItemTypes.TICKET,
+      drop: (item) => handleDrop(item, task.id),
+    });
+
+    return (
+      <div ref={ref} className="task-column">
+        <div className="task-header">
+          <h3>{task.title}</h3>
+          {task.title === "To Do" && <button onClick={() => openModal(task.id)}>Add Ticket</button>}
+        </div>
+        <div className="ticket-list">
+          {task.tickets.map((ticket, index) => (
+            <TicketItem key={ticket.id} ticket={ticket} taskId={task.id} index={index} />
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const TicketItem = ({ ticket, taskId }) => {
+    const [{ isDragging }, dragRef] = useDrag({
+      type: ItemTypes.TICKET,
+      item: { id: ticket.id, taskId },
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
+    });
+
+    return (
+      <div ref={dragRef} className="ticket" style={{ opacity: isDragging ? 0.5 : 1 }}>
+        <Ticket {...ticket} />
+      </div>
+    );
+  };
+
+  const handleDrop = async (item, destinationTaskId) => {
+    const { id: ticketId, taskId: sourceTaskId } = item;
+    if (sourceTaskId === destinationTaskId) return;
+
+    const sourceTask = tasks.find((task) => task.id === sourceTaskId);
+    const destinationTask = tasks.find((task) => task.id === destinationTaskId);
+    const movedTicket = sourceTask.tickets.find((ticket) => ticket.id === ticketId);
+
+    // Remove ticket from source task and add to destination task
+    const updatedSourceTickets = sourceTask.tickets.filter((ticket) => ticket.id !== ticketId);
+    const updatedDestinationTickets = [...destinationTask.tickets, movedTicket];
+
+    // Update state
+    setTasks((prevTasks) =>
+      prevTasks.map((task) => {
+        if (task.id === sourceTaskId) {
+          return { ...task, tickets: updatedSourceTickets };
+        } else if (task.id === destinationTaskId) {
+          return { ...task, tickets: updatedDestinationTickets };
+        } else {
+          return task;
+        }
+      })
+    );
+
+    // Update Firebase
+    await updateTaskTicketsInFirebase(sourceTaskId, updatedSourceTickets);
+    await updateTaskTicketsInFirebase(destinationTaskId, updatedDestinationTickets);
+  };
+
+  // Modal handlers
   const openModal = (taskId) => {
     setSelectedTaskId(taskId);
     setModalOpen(true);
@@ -149,19 +185,14 @@ const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
   const handleDifficultyChange = (e) => {
     const { value } = e.target;
     setTicketData((prev) => ({ ...prev, difficulty: value }));
-    e.target.style.color = value === "Easy" ? "green" : value === "Medium" ? "#C1C1C1" : "black";
   };
 
   const submitTicket = async (e) => {
     e.preventDefault();
     const task = tasks.find((task) => task.id === selectedTaskId);
 
-    if (!task || task.title !== "To Do") {
-      alert("Tickets can only be added to the 'To Do' column.");
-      return;
-    }
-
     const newTicket = {
+      id: Date.now().toString(), // Unique ID for the ticket
       ...ticketData,
       assignee: ticketData.assignee ? ticketData.assignee.name : '',
       assigner: ticketData.assigner ? ticketData.assigner.name : '',
@@ -169,20 +200,14 @@ const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
     };
 
     try {
-      const ticketDocRef = doc(collection(db, `workspace/${workspaceCode}/sprints/${sprintId}/tasks/${selectedTaskId}/tickets`));
-      await setDoc(ticketDocRef, newTicket);
+      // Add the new ticket directly to the task's tickets array in Firebase
+      const updatedTickets = [...task.tickets, newTicket];
+      await updateTaskTicketsInFirebase(selectedTaskId, updatedTickets);
 
-      // Update task's tickets in Firestore
-      const taskRef = doc(db, `workspace/${workspaceCode}/sprints/${sprintId}/tasks`, selectedTaskId);
-      const updatedTickets = [...task.tickets, { id: ticketDocRef.id, ...newTicket }];
-      await updateDoc(taskRef, { tickets: updatedTickets });
-
-      // Update the state with the new ticket
+      // Update local state
       setTasks((prevTasks) =>
         prevTasks.map((task) =>
-          task.id === selectedTaskId
-            ? { ...task, tickets: updatedTickets }
-            : task
+          task.id === selectedTaskId ? { ...task, tickets: updatedTickets } : task
         )
       );
       closeModal();
@@ -192,73 +217,22 @@ const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
   };
 
   return (
-    <div className="task-container">
-      <h2>Tasks</h2>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="all-columns" direction="horizontal" type="COLUMN">
-          {(provided) => (
-            <div
-              className="tasks"
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-            >
-              {tasks.map((task, index) => (
-                <Draggable key={task.id} draggableId={task.id} index={index}>
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      className="task-column"
-                    >
-                      <div className="task-header">
-                        <h3>{task.title}</h3>
-                        {task.title === "To Do" && <button onClick={() => openModal(task.id)}>Add Ticket</button>}
-                      </div>
-                      {task.tickets.map((ticket, ticketIndex) => (
-                        <Draggable key={ticket.id} draggableId={ticket.id} index={ticketIndex}>
-                          {(provided) => (
-                            <div
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                              className="ticket"
-                            >
-                              <Ticket
-                                title={ticket.title}
-                                description={ticket.description}
-                                category={ticket.category}
-                                assignee={ticket.assignee}
-                                assigner={ticket.assigner}
-                                difficulty={ticket.difficulty}
-                              />
-                            </div>
-                          )}
-                        </Draggable>
-                      ))}
-                      {provided.placeholder}
-                    </div>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-
-              {/* Create Task Box */}
-              <div className="create-task-box" onClick={createNewColumn}>
-                + Create Task
-              </div>
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
-
+    <DndProvider backend={HTML5Backend}>
+      <div className="task-container">
+        <h2>Tasks</h2>
+        <div className="tasks">
+          {tasks.map((task) => (
+            <TaskColumn key={task.id} task={task} />
+          ))}
+        </div>
+        <div className="create-task-box" onClick={createNewColumn}>+ Create Task</div>
+      </div>
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <h2>Add New Ticket</h2>
         <form onSubmit={submitTicket}>
           <input type="text" name="title" placeholder="Title" onChange={handleTicketInput} value={ticketData.title} required />
           <textarea name="description" placeholder="Description" onChange={handleTicketInput} value={ticketData.description} required></textarea>
           <input type="text" name="category" placeholder="Category" onChange={handleTicketInput} value={ticketData.category} />
-
           <label>Assignee</label>
           <Dropdown
             options={workspaceUsers}
@@ -266,7 +240,6 @@ const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
             onSelect={(user) => setTicketData(prev => ({ ...prev, assignee: user }))}
             placeholder="Select Assignee"
           />
-
           <label>Assigner</label>
           <Dropdown
             options={workspaceUsers}
@@ -274,7 +247,6 @@ const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
             onSelect={(user) => setTicketData(prev => ({ ...prev, assigner: user }))}
             placeholder="Select Assigner"
           />
-
           <select
             name="difficulty"
             onChange={handleDifficultyChange}
@@ -287,11 +259,10 @@ const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
             <option value="Medium">Medium</option>
             <option value="Hard">Hard</option>
           </select>
-
           <button type="submit">Submit Ticket</button>
         </form>
       </Modal>
-    </div>
+    </DndProvider>
   );
 };
 

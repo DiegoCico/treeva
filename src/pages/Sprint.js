@@ -1,3 +1,5 @@
+// Sprint.js
+
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { db } from '../firebase';
@@ -123,7 +125,6 @@ const Sprint = () => {
               {sprint.hasEnded ? 'Sprint Ended' : 'End Sprint'}
             </button>
           </div>
-          {/* Pass workspaceCode and sprint.id as props */}
           <TaskComponent workspaceCode={workspaceCode} sprintId={sprint.id} />
         </>
       ) : (

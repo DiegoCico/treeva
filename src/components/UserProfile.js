@@ -42,17 +42,12 @@ export default function UserProfile({ userData, workspace, workspaceCode }) {
 
                 const currentSprintName = currentSprint.id;
 
-                // Fetch tasks within the current sprint
+                // Fetch tasks within the current sprint, assuming tickets are embedded in each task
                 const tasksSnapshot = await getDocs(collection(db, "workspace", workspaceCode, "sprints", currentSprintName, "tasks"));
-                const tasksData = await Promise.all(tasksSnapshot.docs.map(async (taskDoc) => {
+                const tasksData = tasksSnapshot.docs.map((taskDoc) => {
                     const taskData = taskDoc.data();
-                    const ticketsSnapshot = await getDocs(collection(db, "workspace", workspaceCode, "sprints", currentSprintName, "tasks", taskDoc.id, "tickets"));
-                    const ticketsData = ticketsSnapshot.docs.map(ticketDoc => ({
-                        id: ticketDoc.id,
-                        ...ticketDoc.data()
-                    }));
-                    return { id: taskDoc.id, ...taskData, tickets: ticketsData };
-                }));
+                    return { id: taskDoc.id, ...taskData, tickets: taskData.tickets || [] };
+                });
 
                 setTasks(tasksData);
 
@@ -70,8 +65,6 @@ export default function UserProfile({ userData, workspace, workspaceCode }) {
                         }
                     });
                 });
-
-                console.log(userData.name + " " + userTotalTickets);
 
                 const calculatedProgress = userTotalTickets === 0 ? 100 : Math.round((userClosedTickets / userTotalTickets) * 100);
                 

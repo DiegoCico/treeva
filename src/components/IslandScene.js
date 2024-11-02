@@ -1,55 +1,116 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect } from "react";
 import { Canvas, useLoader } from "@react-three/fiber";
 import { OrbitControls } from '@react-three/drei';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import * as THREE from 'three';
 
-function Stage1Tree() {
-    // Load the GLTF model
-    const gltf = useLoader(GLTFLoader, '/path/to/stage1.glb'); // Replace with the actual path to stage1.glb
+function getRandomColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
 
-    // Create the material for the tree (optional, if you want to override the material from the model)
+function StageTree({ stage }) {
+    let pos;
+    const gltf = useLoader(GLTFLoader, `/stage${stage}.gltf`); // Replace with the actual path to stage1.glb
     const treeMaterial = new THREE.MeshStandardMaterial({
-        color: '#ffffff',
-        roughness: 1,
-        metalness: 0,
+        color: '#228B22',
+        roughness: 0.6,
+        metalness: 0.1
     });
 
-    // Apply the material to the model (if needed)
+    // Set position based on the stage
+    if (stage === 1) {
+        pos = [0, 1, 0];
+    } else if (stage === 2) {
+        pos = [0, 1.5, 0];
+    } else if (stage === 3) {
+        pos = [0, 1.8, 0];
+    } else if (stage === 4) {
+        pos = [0, 2, 0];
+    }
+
+    // Center the model by calculating the bounding box and adjusting the position
     gltf.scene.traverse((child) => {
         if (child.isMesh) {
+            child.geometry.computeBoundingBox();
+            const boundingBox = child.geometry.boundingBox;
+            const center = new THREE.Vector3();
+            boundingBox.getCenter(center);
+            child.geometry.translate(-center.x, -center.y, -center.z); // Move the model so its center is at the origin
+
             child.material = treeMaterial;
             child.material.needsUpdate = true;
         }
     });
 
-    return <primitive object={gltf.scene} position={[0, 0.5, 0]} scale={1} />;
+    return (
+        <>
+            {/* Render the tree model */}
+            <primitive object={gltf.scene} position={pos} scale={1} />
+            
+            {/* Render the small red hexagon */}
+            <mesh rotation={[0, 0, 0]} position={[0, 0.35, 0]}>
+                <cylinderGeometry args={[1, 1, 0.1, 6]} />
+                <meshStandardMaterial color={getRandomColor()} />
+            </mesh>
+        </>
+    );
 }
 
 export default function IslandScene() {
+    useEffect(() => {
+        const canvasElement = document.querySelector('canvas');
+
+        const handleContextLost = (event) => {
+            event.preventDefault();
+            console.warn("WebGL context lost. Attempting to restore...");
+        };
+
+        const handleContextRestored = () => {
+            console.info("WebGL context restored.");
+        };
+
+        canvasElement.addEventListener('webglcontextlost', handleContextLost);
+        canvasElement.addEventListener('webglcontextrestored', handleContextRestored);
+
+        return () => {
+            canvasElement.removeEventListener('webglcontextlost', handleContextLost);
+            canvasElement.removeEventListener('webglcontextrestored', handleContextRestored);
+        };
+    }, []);
+
     return (
-        <Canvas
-            camera={{ position: [5, 5, 10], fov: 75 }}
-            style={{ width: '100%', height: 'calc(100vh - 150px)' }}
-        >
-            {/* Use Suspense for async loading of the GLTF model */}
-            <Suspense fallback={<span>Loading...</span>}>
-                {/* Lighting */}
+        <Suspense fallback={<div>Loading...</div>}>
+            <Canvas
+                camera={{ position: [5, 5, 10], fov: 45 }}
+                style={{ width: '100%', height: 'calc(100vh - 150px)' }}
+                gl={{ preserveDrawingBuffer: true }}
+                dpr={Math.min(window.devicePixelRatio, 2)}
+            >
                 <ambientLight intensity={0.6} />
                 <directionalLight position={[10, 10, 5]} intensity={1} />
 
-                {/* Island base */}
-                <mesh rotation={[0, 0, 0]} position={[0, 0, 0]}>
-                    <cylinderGeometry args={[5, 5, 0.5, 6]} />
-                    <meshStandardMaterial color="#8B4513" />
-                </mesh>
+                <group>
+                    {/* Brown base */}
+                    <mesh rotation={[0, 0, 0]} position={[0, 0, 0]}>
+                        <cylinderGeometry args={[5, 5, 0.5, 6]} />
+                        <meshStandardMaterial color="#8B4513" />
+                    </mesh>
+                    {/* Grass layer */}
+                    <mesh rotation={[0, 0, 0]} position={[0, 0.30, 0]}>
+                        <cylinderGeometry args={[5, 5, 0.1, 6]} />
+                        <meshStandardMaterial color="#27AE60" />
+                    </mesh>
+                </group>
 
-                {/* Render the GLTF tree model */}
-                <Stage1Tree />
-            </Suspense>
+                <StageTree stage={4} />
 
-            {/* Orbit controls for rotating the scene */}
-            <OrbitControls />
-        </Canvas>
+                <OrbitControls enablePan={false} enableZoom={false} />
+            </Canvas>
+        </Suspense>
     );
 }
