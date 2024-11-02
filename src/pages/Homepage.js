@@ -7,6 +7,7 @@ import Sprint from './Sprint';
 import UserProfile from '../components/UserProfile';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
+import IslandScene from '../components/IslandScene';
 
 export default function Homepage() {
     const { userId, workspaceCode } = useParams()
@@ -50,6 +51,7 @@ export default function Homepage() {
                 <div className='main'>
                     {activeButton === 'user' && <UserProfile userData={userData}/>}
                     {activeButton === 'sprints' && <Sprint />}
+                    {activeButton === 'trees' && <IslandScene />}
                 </div>
             </div>
         </div>

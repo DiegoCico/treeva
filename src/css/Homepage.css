@@ -9,15 +9,21 @@
 
 .sidenav {
     grid-area: 1 / 1 / 6 / 2;
-    background-color: black; /* Adds a black background */
-    color: white; /* Ensures text inside the sidebar is white */
+    background-color: black;
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: calc((100% / 11) * 1);
+    height: 100vh; /* Full height of the viewport */
+    z-index: 1000; /* Ensure it stays on top */
 }
 
+/* Adjust the main content to leave space for the fixed sidebar */
 .body {
     grid-area: 1 / 2 / 6 / 12;
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    /* Make the first row smaller and the rest flexible */
     grid-template-rows: 80px auto auto auto auto;
     grid-column-gap: 0px;
     grid-row-gap: 0px;

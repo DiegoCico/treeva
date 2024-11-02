@@ -33,7 +33,7 @@ export default function UserProfile({ userData }) {
                     <div className="section section4">
                         <h2>Your Progress</h2>
                         <div className="progress-circle">
-                            <span>100%</span>
+                            <span>50%</span>
                         </div>
                     </div>
                 </div>
