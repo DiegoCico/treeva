@@ -1,89 +1,93 @@
-/* TaskComponent.css */
-
-body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #f0f4f8;
-    color: #333;
-    margin: 0;
-    padding: 0;
+/* Main container for the task component */
+.task-container {
+    padding: 20px;
+    background-color: #f9f9f9;
+    overflow-x: auto;
+    white-space: nowrap;
   }
   
-  .task-container {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 1rem;
-    text-align: center;
+  /* Container for all task columns */
+  .tasks {
+    display: inline-flex;
+    gap: 20px;
+    padding: 10px 0;
+    align-items: flex-start;
   }
   
-  h1 {
-    color: #2e7d32; /* Dark green */
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
-  }
-  
-  .sprints {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .sprint {
-    background-color: #fff; /* White */
-    border: 1px solid #2e7d32; /* Dark green */
+  /* Styling for each task column */
+  .task-column {
+    min-width: 280px;
+    background-color: #fff;
+    border: 1px solid #ddd;
     border-radius: 8px;
-    padding: 1rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: inline-block;
+    vertical-align: top;
   }
   
-  .sprint h2 {
-    color: #1b5e20;
-    font-size: 1.3rem;
-    margin-bottom: 0.5rem;
-    border-bottom: 2px solid #1b5e20;
-    padding-bottom: 0.3rem;
-    text-align: left;
-  }
-  
-  .task {
-    background-color: #e8f5e9; /* Light green */
-    padding: 0.8rem;
-    margin-top: 0.5rem;
-    border-left: 4px solid #1b5e20;
-    border-radius: 4px;
-    text-align: left;
-  }
-  
-  .task h3 {
-    color: #000;
-    font-size: 1.1rem;
-    margin: 0;
-  }
-  
-  .task p {
-    color: #555;
-    font-size: 0.9rem;
-    margin: 0.3rem 0 0;
-  }
-  
-  .no-tasks {
-    font-style: italic;
-    color: #999;
-  }
-  
-  .add-task-btn {
-    margin-top: 1.5rem;
-    padding: 0.7rem 2rem;
-    background-color: #2e7d32;
-    color: #fff;
-    font-size: 1rem;
+  /* Header for each task column */
+  .task-column h3 {
+    font-size: 18px;
     font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  
+  /* Button for adding new task columns */
+  .add-task-btn {
+    background-color: #28a745;
+    color: #fff;
     border: none;
+    padding: 8px 16px;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    font-weight: bold;
+    margin: 10px 0;
+    transition: background-color 0.3s;
   }
   
   .add-task-btn:hover {
-    background-color: #1b5e20;
+    background-color: #218838;
+  }
+  
+  /* Styling for each ticket within a task column */
+  .ticket {
+    width: 100%;
+    padding: 10px;
+    background-color: #eafaf1;
+    border: 1px solid #28a745;
+    border-radius: 5px;
+    margin-top: 10px;
+    color: #333;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .ticket h4 {
+    font-size: 16px;
+    margin: 0 0 5px;
+  }
+  
+  .ticket p {
+    font-size: 14px;
+    margin: 0;
+    color: #555;
+  }
+  
+  /* Scrollbar styling for horizontal scroll */
+  .task-container::-webkit-scrollbar {
+    height: 8px;
+  }
+  
+  .task-container::-webkit-scrollbar-thumb {
+    background-color: #28a745;
+    border-radius: 4px;
+  }
+  
+  .task-container::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
   }
   

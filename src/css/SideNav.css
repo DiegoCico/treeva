@@ -1,60 +1,122 @@
 .sidenav-container {
-    display: flex; /* Use flexbox to align items */
-    flex-direction: column; /* Stack items vertically */
-    height: 100%; /* Ensure the container takes full height */
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .logo-cont {
-    flex: 1; /* Allow the logo container to grow */
-    display: flex; /* Use flexbox for centering */
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .logo-placeholder {
-    width: 100px; /* Adjust to your desired square size */
+    width: 100px;
     height: 100px;
-    background-color: gray; /* Color of the placeholder */
+    background-color: gray;
     display: flex;
-    justify-content: center; /* Center text horizontally */
-    align-items: center; /* Center text vertically */
-    color: white; /* Text color */
-    font-weight: bold; /* Optional: make text bold */
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: bold;
 }
 
 .btns-cont {
     display: flex;
-    flex-direction: column; /* Stack buttons vertically */
-    align-items: center; /* Center buttons horizontally */
+    flex-direction: column;
+    align-items: center;
 }
 
 .icon-button {
-    width: 100px; /* Set width to 100px */
-    height: 100px; /* Set height to 100px */
-    background-color: transparent; /* Background transparent for icon button */
-    border: none; /* Remove border */
-    color: white; /* Icon color */
-    font-size: 2rem; /* Icon size */
-    cursor: pointer; /* Show pointer cursor on hover */
-    display: flex; /* Flexbox for centering */
-    justify-content: center; /* Center icon horizontally */
-    align-items: center; /* Center icon vertically */
-    margin: 10px 0; /* Add some spacing */
-    position: relative; /* Required for pseudo-element */
+    width: 100px;
+    height: 100px;
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 0;
+    position: relative;
 }
 
 .icon-button.active::before {
-    content: ''; /* Pseudo-element to create the line */
-    position: absolute; /* Position it relative to the button */
-    left: -5px; /* Adjust this value to position the line */
+    content: '';
+    position: absolute;
+    left: -5px;
     top: 0;
-    height: 100%; /* Full height of the button */
-    width: 5px; /* Width of the line */
-    background-color: white; /* Color of the line */
-    border-radius: 5px; /* Optional: rounded edges for the line */
-    z-index: 1; /* Ensure line appears above the button */
+    height: 100%;
+    width: 5px;
+    background-color: white;
+    border-radius: 5px;
+    z-index: 1;
 }
 
 .icon-button:hover {
-    background-color: rgba(255, 255, 255, 0.1); /* Add hover effect */
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Profile Box Styles */
+.userprofile-cont {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.profile-box {
+    width: 850px;
+    max-width: 90%;
+    height: 625px;
+    background-color: #F7F7F7;
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-header {
+    background-color: #27AE60;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    padding: 10px;
+}
+
+.profile-header h1 {
+    font-size: 2rem;
+    margin: 0;
+    color: white;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .icon-button {
+        width: 80px;
+        height: 80px;
+        font-size: 1.8rem;
+    }
+
+    .profile-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .profile-box {
+        width: 90%;
+        height: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .icon-button {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+
+    .profile-header h1 {
+        font-size: 1.2rem;
+    }
 }

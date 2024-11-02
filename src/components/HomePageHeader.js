@@ -1,11 +1,11 @@
 import React from "react";
 import '../css/HomePageHeader.css';
 
-export default function HomePageHeader({ userId }) {
+export default function HomePageHeader({ userName }) {
     return (
         <div className="header-cont">
             <div className="greeting">
-                <h1>Hi, {userId}</h1>
+                <h1>Hi, {userName}</h1>
             </div>
             <div className="actions">
                 <input 

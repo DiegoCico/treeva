@@ -1,0 +1,134 @@
+.userprofile-cont {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.profile-box {
+    background-color: #F7F7F7;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 850px;
+    min-height: 625px;
+    padding: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.profile-header {
+    background-color: #27AE60;
+    color: white;
+    padding: 10px 20px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.profile-header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.user-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 20px;
+    padding: 20px;
+}
+
+.section {
+    background-color: #FFFFFF;
+    border: 1px solid #C1C1C1;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+/* Column layout for Full Name, Session Code, and Email */
+.section1 {
+    display: flex;
+    gap: 20px;
+}
+
+.section1 .column {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    text-align: left;
+}
+
+.section1 .email {
+    align-self: flex-start;
+}
+
+.section1 p strong {
+    font-weight: lighter;
+    color: #808080;
+    
+}
+
+.section1 p {
+    margin: 0 0 10px;
+    font-size: 0.9rem;
+    color: #808080;
+    font-weight: bold;
+}
+
+.section h2 {
+    margin-top: 0;
+    font-size: 1.1rem;
+}
+
+.section3 h2 {
+    text-align: left;
+}
+
+.section3 {
+    color: #808080;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.section3 textarea {
+    width: 100%;
+    height: 60%;
+    border-radius: 5px;
+    border: 1px solid #C1C1C1;
+    resize: none;
+}
+
+.progress-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 8px solid #27AE60;
+    color: #27AE60;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin: auto;
+}
+
+@media (max-width: 900px) {
+    .profile-box {
+        padding: 15px;
+    }
+
+    .user-info {
+        gap: 15px;
+    }
+}
+
+@media (max-width: 600px) {
+    .profile-box {
+        min-height: 400px;
+    }
+
+    .user-info {
+        grid-template-columns: 1fr;
+    }
+}

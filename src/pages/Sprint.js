@@ -3,33 +3,38 @@ import { useParams } from 'react-router-dom';
 import { db } from '../firebase';
 import { collection, doc, setDoc, getDocs, query, orderBy, limit, updateDoc } from 'firebase/firestore';
 import '../css/Sprint.css';
+import TaskComponent from '../components/Task';
 
 const Sprint = () => {
   const { userId, workspaceCode } = useParams(); 
   const [sprint, setSprint] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [newSprintName, setNewSprintName] = useState('');
-  const [newSprintDuration, setNewSprintDuration] = useState('');
-  const [countdown, setCountdown] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
-  // Fetch the most recent sprint when workspaceCode is available
+  console.log("Workspace Code:", workspaceCode);
+  console.log("User ID:", userId);
+
   useEffect(() => {
     const fetchMostRecentSprint = async () => {
       try {
-        const sprintRef = collection(db, `${workspaceCode}/sprints`);
-        const sprintQuery = query(sprintRef, orderBy('createdAt', 'desc'), limit(1));
-        const sprintSnapshot = await getDocs(sprintQuery);
+        console.log("Fetching the most recent sprint...");
 
+        const sprintRef = collection(db, `workspace/${workspaceCode}/sprints`);
+        const sprintQuery = query(sprintRef, orderBy('createdAt', 'desc'), limit(1));
+        
+        const sprintSnapshot = await getDocs(sprintQuery);
+        console.log("Sprint Snapshot Size:", sprintSnapshot.size);
+        
         if (sprintSnapshot.empty) {
-          setShowModal(true); // Show modal if no sprints exist
+          console.log("No sprints found. Showing modal for creating a new sprint.");
+          setShowModal(true);
         } else {
           sprintSnapshot.forEach((doc) => {
             const sprintData = { id: doc.id, ...doc.data() };
+            console.log("Fetched Sprint Data:", sprintData);
             setSprint(sprintData);
-            const remainingTime = calculateRemainingTime(sprintData.duration);
-            setCountdown(remainingTime);
           });
         }
       } catch (error) {
@@ -45,38 +50,27 @@ const Sprint = () => {
     }
   }, [workspaceCode]);
 
-  useEffect(() => {
-    if (countdown === 0) {
-      setShowModal(true); // Show modal when countdown reaches zero
-    }
-
-    if (countdown > 0) {
-      const intervalId = setInterval(() => {
-        setCountdown((prevCountdown) => prevCountdown - 1);
-      }, 1000); // Decrement every second
-
-      return () => clearInterval(intervalId);
-    }
-  }, [countdown]);
-
   const handleCreateSprint = async () => {
+    console.log("Creating a new sprint...");
+
     if (!newSprintName) {
       setError("Sprint name is required.");
+      console.log("Error: Sprint name is required.");
       return;
     }
 
     try {
-      const sprintDocRef = doc(db, `${workspaceCode}/sprints`, newSprintName);
+      const sprintDocRef = doc(db, `workspace/${workspaceCode}/sprints`, newSprintName);
       const newSprint = {
         name: newSprintName,
-        duration: newSprintDuration,
         hasEnded: false,
         createdAt: new Date(),
       };
+
+      console.log("New Sprint Data:", newSprint);
+
       await setDoc(sprintDocRef, newSprint);
       setSprint({ id: newSprintName, ...newSprint });
-      const remainingTime = calculateRemainingTime(newSprintDuration);
-      setCountdown(remainingTime); // Reset countdown for new sprint
       setShowModal(false);
       setError(''); // Clear error on successful creation
     } catch (error) {
@@ -86,32 +80,18 @@ const Sprint = () => {
   };
 
   const handleEndSprint = async () => {
+    console.log("Ending the sprint...");
+
     try {
-      const sprintDoc = doc(db, `${workspaceCode}/sprints`, sprint.id);
+      const sprintDoc = doc(db, `workspace/${workspaceCode}/sprints`, sprint.id);
       await updateDoc(sprintDoc, { hasEnded: true });
+      console.log("Sprint marked as ended.");
       setSprint((prev) => ({ ...prev, hasEnded: true }));
+      setShowModal(true);
     } catch (error) {
       console.error("Error ending sprint:", error);
       setError("Error ending sprint. Please try again.");
     }
-  };
-
-  const calculateRemainingTime = (duration) => {
-    const [number, unit] = duration.split(' ');
-    const timeMultiplier = {
-      days: 86400, 
-      hours: 3600, 
-      minutes: 60, 
-    };
-    return number * (timeMultiplier[unit] || 0);
-  };
-
-  const formatCountdown = (seconds) => {
-    const days = Math.floor(seconds / 86400);
-    const hours = Math.floor((seconds % 86400) / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-    return `${days}d ${hours}h ${minutes}m ${secs}s`;
   };
 
   if (loading) return <p>Loading...</p>;
@@ -128,12 +108,6 @@ const Sprint = () => {
           value={newSprintName}
           onChange={(e) => setNewSprintName(e.target.value)}
         />
-        <input
-          type="text"
-          placeholder="Duration (e.g., 7 days)"
-          value={newSprintDuration}
-          onChange={(e) => setNewSprintDuration(e.target.value)}
-        />
         <button onClick={handleCreateSprint}>Create Sprint</button>
       </div>
     );
@@ -145,11 +119,12 @@ const Sprint = () => {
         <>
           <div className="sprint-header">
             <h1>{sprint.name}</h1>
-            <p>{formatCountdown(countdown)} remaining</p>
             <button className="end-sprint-btn" onClick={handleEndSprint} disabled={sprint.hasEnded}>
               {sprint.hasEnded ? 'Sprint Ended' : 'End Sprint'}
             </button>
           </div>
+          {/* Pass workspaceCode and sprint.id as props */}
+          <TaskComponent workspaceCode={workspaceCode} sprintId={sprint.id} />
         </>
       ) : (
         <p>No active sprint found.</p>

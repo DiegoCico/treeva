@@ -1,8 +1,21 @@
 import React, {useState} from 'react';
 import '../css/SideNav.css';
+import { getAuth, signOut } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
 
-export default function SideNav() {
-    const [activeButton, setActiveButton] = useState('user');
+export default function SideNav({ activeButton, setActiveButton }) {
+    const auth = getAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+            console.log('User logged out');
+            navigate('/', { replace: true });
+        } catch (error) {
+            console.error('Error during logout:', error);
+        }
+    };
 
     return (
         <>
@@ -27,7 +40,7 @@ export default function SideNav() {
                 </button>
                 <button 
                     className={`icon-button ${activeButton === 'logout' ? 'active' : ''}`} 
-                    onClick={() => setActiveButton('logout')}
+                    onClick={handleLogout}
                 >
                     <i className="fa-solid fa-right-from-bracket"></i>
                 </button>
