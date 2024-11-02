@@ -1,3 +1,60 @@
 .sidenav-container {
-    background-color: black;
+    display: flex; /* Use flexbox to align items */
+    flex-direction: column; /* Stack items vertically */
+    height: 100%; /* Ensure the container takes full height */
+}
+
+.logo-cont {
+    flex: 1; /* Allow the logo container to grow */
+    display: flex; /* Use flexbox for centering */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+}
+
+.logo-placeholder {
+    width: 100px; /* Adjust to your desired square size */
+    height: 100px;
+    background-color: gray; /* Color of the placeholder */
+    display: flex;
+    justify-content: center; /* Center text horizontally */
+    align-items: center; /* Center text vertically */
+    color: white; /* Text color */
+    font-weight: bold; /* Optional: make text bold */
+}
+
+.btns-cont {
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    align-items: center; /* Center buttons horizontally */
+}
+
+.icon-button {
+    width: 100px; /* Set width to 100px */
+    height: 100px; /* Set height to 100px */
+    background-color: transparent; /* Background transparent for icon button */
+    border: none; /* Remove border */
+    color: white; /* Icon color */
+    font-size: 2rem; /* Icon size */
+    cursor: pointer; /* Show pointer cursor on hover */
+    display: flex; /* Flexbox for centering */
+    justify-content: center; /* Center icon horizontally */
+    align-items: center; /* Center icon vertically */
+    margin: 10px 0; /* Add some spacing */
+    position: relative; /* Required for pseudo-element */
+}
+
+.icon-button.active::before {
+    content: ''; /* Pseudo-element to create the line */
+    position: absolute; /* Position it relative to the button */
+    left: -5px; /* Adjust this value to position the line */
+    top: 0;
+    height: 100%; /* Full height of the button */
+    width: 5px; /* Width of the line */
+    background-color: white; /* Color of the line */
+    border-radius: 5px; /* Optional: rounded edges for the line */
+    z-index: 1; /* Ensure line appears above the button */
+}
+
+.icon-button:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Add hover effect */
 }

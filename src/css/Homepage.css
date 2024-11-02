@@ -4,11 +4,35 @@
     grid-template-rows: repeat(5, 1fr);
     grid-column-gap: 0px;
     grid-row-gap: 0px;
+    min-height: 100vh;
 }
 
 .sidenav {
     grid-area: 1 / 1 / 6 / 2;
+    background-color: black; /* Adds a black background */
+    color: white; /* Ensures text inside the sidebar is white */
 }
+
 .body {
     grid-area: 1 / 2 / 6 / 12;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    /* Make the first row smaller and the rest flexible */
+    grid-template-rows: 80px auto auto auto auto;
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+}
+    
+.header {
+    grid-area: 1 / 1 / 2 / 7;
+    background-color: #27AE60;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    color: white;
+}
+
+.main {
+    grid-area: 2 / 1 / 6 / 7;
 }

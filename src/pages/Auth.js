@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { auth, db } from '../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc, arrayUnion, collection, query, where, getDocs } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import '../css/Auth.css';
 
@@ -29,7 +29,7 @@ const Auth = () => {
         
         const userDoc = await getDoc(doc(db, 'users', user.uid));
         if (userDoc.exists() && userDoc.data().workspaceCode) {
-          navigate(`/home/${user.uid}/${userDoc.data().workspaceCode}`);
+          navigate(`/${user.uid}/${userDoc.data().workspaceCode}`);
         } else {
           setAdditionalInfoNeeded(true); 
         }
@@ -62,10 +62,9 @@ const Auth = () => {
       const user = auth.currentUser;
       await setDoc(doc(db, 'workspace', workspaceCode), {
         ownerId: user.uid,
-        name,
-        role,
-        members: [user.uid], // Add user as a member
+        members: [user.uid] // Add user as a member without name and role
       });
+
       // Add user details to 'users' collection
       await setDoc(doc(db, 'users', user.uid), {
         name,
@@ -74,7 +73,7 @@ const Auth = () => {
         email: user.email,
       });
       alert("Workspace created successfully!");
-      navigate(`/home/${user.uid}/${workspaceCode}`);
+      navigate(`/${user.uid}/${workspaceCode}`);
     } catch (err) {
       setError("Error creating workspace: " + err.message);
     }
@@ -82,9 +81,17 @@ const Auth = () => {
 
   const handleJoinWorkspace = async () => {
     try {
-      const workspaceDoc = await getDoc(doc(db, 'workspace', workspaceCode));
+      const workspaceDocRef = doc(db, 'workspace', workspaceCode);
+      const workspaceDoc = await getDoc(workspaceDocRef);
+
       if (workspaceDoc.exists()) {
         const user = auth.currentUser;
+
+        // Add the user to the 'members' array in the workspace document if not already present
+        await updateDoc(workspaceDocRef, {
+          members: arrayUnion(user.uid)
+        });
+
         // Add user details to 'users' collection
         await setDoc(doc(db, 'users', user.uid), {
           name,
@@ -93,8 +100,7 @@ const Auth = () => {
           email: user.email,
         });
         alert("Successfully joined the workspace!");
-        // Redirect to the formatted URL
-        navigate(`/home/${user.uid}/${workspaceCode}`);
+        navigate(`/${user.uid}/${workspaceCode}`);
       } else {
         setError("Workspace not found.");
       }
