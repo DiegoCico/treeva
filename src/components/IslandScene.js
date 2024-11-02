@@ -1,38 +1,55 @@
-import React from "react";
-import { Canvas } from "@react-three/fiber";
+import React, { Suspense } from "react";
+import { Canvas, useLoader } from "@react-three/fiber";
 import { OrbitControls } from '@react-three/drei';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import * as THREE from 'three';
+
+function Stage1Tree() {
+    // Load the GLTF model
+    const gltf = useLoader(GLTFLoader, '/path/to/stage1.glb'); // Replace with the actual path to stage1.glb
+
+    // Create the material for the tree (optional, if you want to override the material from the model)
+    const treeMaterial = new THREE.MeshStandardMaterial({
+        color: '#ffffff',
+        roughness: 1,
+        metalness: 0,
+    });
+
+    // Apply the material to the model (if needed)
+    gltf.scene.traverse((child) => {
+        if (child.isMesh) {
+            child.material = treeMaterial;
+            child.material.needsUpdate = true;
+        }
+    });
+
+    return <primitive object={gltf.scene} position={[0, 0.5, 0]} scale={1} />;
+}
 
 export default function IslandScene() {
     return (
         <Canvas
             camera={{ position: [5, 5, 10], fov: 75 }}
-            // style={{ width: '100%', height: '100vh' }}
             style={{ width: '100%', height: 'calc(100vh - 150px)' }}
         >
-            <ambientLight intensity={0.3} />
-            {/* Directional light to cast shadows */}
-            <directionalLight position={[10, 10, 5]} intensity={1} />
+            {/* Use Suspense for async loading of the GLTF model */}
+            <Suspense fallback={<span>Loading...</span>}>
+                {/* Lighting */}
+                <ambientLight intensity={0.6} />
+                <directionalLight position={[10, 10, 5]} intensity={1} />
 
-            {/* Island base */}
-            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
-                <cylinderGeometry args={[5, 5, 0.5, 6]} />
-                <meshStandardMaterial color="#8B4513" />
-            </mesh>
-
-            {/* Trees as cones */}
-            {[...Array(3)].map((_, index) => (
-                <mesh
-                    key={index}
-                    position={[Math.random() * 4 - 2, 1, Math.random() * 4 - 2]}
-                >
-                    <coneGeometry args={[0.5, 2, 8]} />
-                    <meshStandardMaterial color="#228B22" />
+                {/* Island base */}
+                <mesh rotation={[0, 0, 0]} position={[0, 0, 0]}>
+                    <cylinderGeometry args={[5, 5, 0.5, 6]} />
+                    <meshStandardMaterial color="#8B4513" />
                 </mesh>
-            ))}
+
+                {/* Render the GLTF tree model */}
+                <Stage1Tree />
+            </Suspense>
 
             {/* Orbit controls for rotating the scene */}
             <OrbitControls />
         </Canvas>
-    )
+    );
 }

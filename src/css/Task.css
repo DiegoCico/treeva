@@ -14,6 +14,27 @@
     padding: 10px 0;
     align-items: flex-start;
   }
+
+  .create-task-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 150px;
+    height: 200px;
+    background-color: rgba(200, 200, 200, 0.3); /* Light gray tint */
+    border: 2px dotted rgba(100, 100, 100, 0.5); /* Dotted border */
+    color: #333;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .create-task-box:hover {
+    background-color: rgba(200, 200, 200, 0.5); /* Darker tint on hover */
+  }
+  
   
   /* Styling for each task column */
   .task-column {
@@ -78,6 +99,32 @@
     max-width: 100%; /* Ensure ticket fits within task column */
     word-wrap: break-word; /* Handle overflow for long text */
   }
+
+  .ticket-form {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .form-column {
+    flex: 1;
+  }
+  
+  .form-column.left {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .form-column.right {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  /* Adjust spacing for dropdown and select fields */
+  .difficulty-select, .dropdown, input[type="text"], textarea {
+    width: 100%;
+  }  
   
   .ticket:hover {
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
@@ -243,5 +290,58 @@
   
   .modal-content form button:hover {
     background-color: #218838;
+  }
+  
+  /* Styling for user dropdown options */
+.user-option {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .user-option:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .user-initial-circle {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #28a745;
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 14px;
+    margin-right: 8px;
+  }
+  
+  .user-name {
+    color: #333;
+  }
+  
+  .delete-zone {
+    transition: opacity 0.3s ease, background-color 0.3s ease;
+    opacity: 0;
+    background-color: rgba(255, 0, 0, 0.3); /* Light red background */
+    text-align: center;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    color: white;
+  }
+  
+  .delete-zone.active {
+    opacity: 1;
+    background-color: rgba(255, 0, 0, 0.7); /* Darker red background when active */
+  }
+  
+  .delete-zone p {
+    margin: 0;
   }
   
