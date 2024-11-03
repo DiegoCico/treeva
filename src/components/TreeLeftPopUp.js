@@ -1,12 +1,13 @@
 import React from 'react';
 
-const TreeLeftPopUp = () => {
+const TreeLeftPopUp = ({ currentSprint }) => {
+    console.log(currentSprint)
     return (
         <div
             style={{
                 position: 'absolute',
                 top: '50%',
-                left: '20%',
+                left: '40%',
                 transform: 'translate(-50%, -50%)',
                 padding: '20px',
                 background: 'rgba(0, 0, 0, 0.7)',
@@ -15,7 +16,11 @@ const TreeLeftPopUp = () => {
                 fontWeight: 'bold'
             }}
         >
-            Left Popup Content
+            <div className="analytics-item-right">
+              <p>Total Tickets: {currentSprint.totalTickets}</p>
+              <p>Closed Tickets: {currentSprint.closedTickets}</p>
+              <p>Progress %: {currentSprint.closePercentage}%</p>
+            </div>
         </div>
     );
 };

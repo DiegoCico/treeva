@@ -7,7 +7,7 @@ export default function UserProfile({ userData, workspace, workspaceCode }) {
     const members = workspace.members || []; // Array of user IDs
     const [teamMembers, setTeamMembers] = useState([]);
     const [tasks, setTasks] = useState([]);
-    const [progress, setProgress] = useState(0); // Start at 0 to recalculate accurately
+    const [progress, setProgress] = useState(100); // Start at 0 to recalculate accurately
 
     useEffect(() => {
         const fetchTeamMembers = async () => {
@@ -97,7 +97,7 @@ export default function UserProfile({ userData, workspace, workspaceCode }) {
                 <div className="user-info">
                     <div className="section section1">
                         <div className="column">
-                            <p><strong>Full Name</strong><br />{userData.name || "{user full name}"}</p>
+                            <p><strong>Name</strong><br />{userData.name || "{user full name}"}</p>
                             <p><strong>Session Code</strong><br />{workspaceCode || "{user session code}"}</p>
                         </div>
                         <div className="column email">

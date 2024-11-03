@@ -377,7 +377,7 @@ const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
             options={workspaceUsers}
             selected={ticketData.assigner}
             onSelect={(user) => setTicketData((prev) => ({ ...prev, assigner: user }))}
-            placeholder="Select Assigner"
+            placeholder="Select Assignor"
           />
           <select
             name="difficulty"

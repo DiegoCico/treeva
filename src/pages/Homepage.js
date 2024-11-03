@@ -17,6 +17,7 @@ export default function Homepage() {
     const [sprintStage, setSprintStage] = useState(0);
     const [currentSprints, setCurrentSprints] = useState({});
     const [isDarkMode, setIsDarkMode] = useState(false); // Dark mode state
+    const [sprintData, setSprintData] = useState([]);
 
     const toggleDarkMode = () => setIsDarkMode(!isDarkMode); // Toggle dark mode
 
@@ -30,6 +31,80 @@ export default function Homepage() {
             console.log(error);
         }
     };
+
+    useEffect(() => {
+        const fetchSprints = async () => {
+          try {
+            const sprintsRef = collection(db, `workspace/${workspaceCode}/sprints`);
+            const sprintsSnapshot = await getDocs(sprintsRef);
+    
+            const sprints = await Promise.all(
+              sprintsSnapshot.docs.map(async (sprintDoc) => {
+                const sprintId = sprintDoc.id;
+                const sprintInfo = sprintDoc.data();
+    
+                const tasksSnapshot = await getDocs(collection(db, `workspace/${workspaceCode}/sprints/${sprintId}/tasks`));
+                let totalTickets = 0;
+                let closedTickets = 0;
+                let ticketsData = [];
+                let memberStats = {}; // Track stats per member
+    
+                tasksSnapshot.docs.forEach((taskDoc) => {
+                  const taskData = taskDoc.data();
+                  const tickets = taskData.tickets || [];
+                  totalTickets += tickets.length;
+    
+                  tickets.forEach(ticket => {
+                    const createdAt = ticket.createdAt ? ticket.createdAt.toDate() : null;
+                    const closedAt = ticket.closedAt ? ticket.closedAt.toDate() : null;
+                    const assignee = ticket.assignee || "Unassigned";
+    
+                    // Update member stats
+                    if (!memberStats[assignee]) {
+                      memberStats[assignee] = { received: 0, closed: 0 };
+                    }
+                    memberStats[assignee].received += 1;
+                    if (closedAt) {
+                      memberStats[assignee].closed += 1;
+                    }
+    
+                    if (createdAt) {
+                      ticketsData.push({
+                        createdAt: createdAt.toISOString().split('T')[0],
+                        closedAt: closedAt ? closedAt.toISOString().split('T')[0] : null,
+                      });
+                    }
+    
+                    if (taskData.title === "Close") {
+                      closedTickets++;
+                    }
+                  });
+                });
+    
+                const closePercentage = totalTickets > 0 ? Math.round((closedTickets / totalTickets) * 100) : 0;
+    
+                return {
+                  name: sprintInfo.name || sprintId,
+                  totalTickets,
+                  closedTickets,
+                  closePercentage,
+                  ticketsData,
+                  memberStats,
+                };
+              })
+            );
+    
+            setSprintData(sprints.reverse());
+          } catch (error) {
+            console.error("Error fetching sprints:", error);
+            setSprintData([]);
+          }
+        };
+    
+        if (workspaceCode) {
+          fetchSprints();
+        }
+      }, [workspaceCode]);
 
     const getWorkspaceData = async (workspaceCode) => {
         try {
@@ -61,6 +136,7 @@ export default function Homepage() {
                     })
                 );
                 setCurrentSprints(sprints);
+                console.log(sprintData)
             } else {
                 console.log('No workspace found');
             }
@@ -100,7 +176,7 @@ export default function Homepage() {
                         <UserProfile userData={userData} workspace={workspace} workspaceCode={workspaceCode} />
                     )}
                     {activeButton === 'sprints' && <Sprint />}
-                    {activeButton === 'trees' && <IslandScene sprintsData={currentSprints} />}
+                    {activeButton === 'trees' && <IslandScene sprintsData={sprintData} />}
                 </div>
             </div>
         </div>

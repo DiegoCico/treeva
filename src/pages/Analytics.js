@@ -3,6 +3,8 @@ import { db } from '../firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import { VictoryChart, VictoryLine, VictoryAxis, VictoryTooltip, VictoryVoronoiContainer, VictoryLegend } from 'victory';
 import '../css/Analytics.css';
+import TreeLeftPopUp from '../components/TreeLeftPopUp';
+import TreeRightPopUp from '../components/TreeRightPopUp';
 
 const Analytics = ({ workspaceCode }) => {
   const [sprintData, setSprintData] = useState([]);

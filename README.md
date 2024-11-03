@@ -1,12 +1,12 @@
-# Treeva
+# 🌳 Treeva 🌳
 
-This repository is a task management and visualization app designed to enhance productivity and team collaboration with a unique 3D tree representation of sprint progress. With features like dark and light modes, Firebase integration, detailed user profiles, team analytics, and task management, this app provides an engaging and intuitive way to manage projects.
+This is a task management and visualization app designed to enhance productivity and team collaboration with a unique 3D tree representation of sprint progress. With features like dark and light modes, Firebase integration, detailed user profiles, team analytics, and task management, this app provides an engaging and intuitive way to manage projects.
 
-## Inspiration
+## 🌱 Inspiration
 
-We wanted to make project management fun and something people actually look forward to using every day. The idea of a 3D tree for tracking sprints came from wanting to see progress in a way that feels alive — you’re literally watching your work “grow”! Traditional task tools can feel dull and complicated, so we set out to create something interactive and visually apelling, with real-time updates and easy team stats. Treeva is all about making teamwork feel rewarding and keeping things simple but powerful, so every task done is like leveling up together.
+We wanted to make project management fun and something people look forward to using every day. The idea of a 3D tree for tracking sprints came from wanting to see progress in a way that feels alive — you’re literally watching your work “grow”! Traditional task tools can feel dull and complicated, so we set out to create something interactive and visually appealing, with real-time updates and easy team stats. Treeva is all about making teamwork feel rewarding and keeping things simple but powerful, so every task done is like leveling up together.
 
-## Challenges We Faced
+## 🔧 Challenges We Faced
 
 1. **Performance with 3D Graphics**: Rendering 3D trees can be demanding, especially on lower-end devices. Keeping everything smooth without lag might require optimization to prevent slow load times.
 
@@ -18,7 +18,7 @@ We wanted to make project management fun and something people actually look forw
 
 5. **3D Navigation and Usability**: Getting users comfortable with navigating a 3D environment for tasks might require tutorials or tips, as not everyone is familiar with interactive 3D interfaces.
 
-## What we Learned
+## 💡 What we Learned
 1. **Balancing Aesthetics and Functionality**: We realized how challenging it is to create a visually engaging experience that’s also practical. Making the 3D tree look good without sacrificing usability was a big learning curve.
 
 2. **Optimizing Real-Time Features**: Working with Firebase taught us a lot about handling real-time data. Syncing updates across users quickly and reliably showed us the importance of efficient data structuring and handling.
@@ -31,7 +31,7 @@ We wanted to make project management fun and something people actually look forw
 
 6. **Flexibility in User Preferences**: With features like dark and light mode, we learned that small customization options can make a big difference. Flexibility helps users feel more at home with the app, so we plan to keep expanding on this idea.
 
-## Features
+## 🚀 Features
 
 - **3D Tree Visualization**: Sprint tasks are visualized as trees on an island, providing a fun and interactive way to track progress. Each tree stage reflects the percentage of completed tasks, giving a visual snapshot of sprint health.
 - **Interactive Dark/Light Modes**: Customize the appearance of the app with a toggle between dark and light modes, ensuring a comfortable user experience.
@@ -43,7 +43,7 @@ We wanted to make project management fun and something people actually look forw
 - **Dynamic Task Categories and Difficulties**: Supports categorizing tasks and assigning difficulty levels, allowing teams to prioritize work effectively.
 - **Intuitive User Interface**: Includes animated elements, smooth transitions, and tooltips for an improved user experience, making project management both functional and visually appealing.
 
-## Code Overview
+## 📂 Code Overview
 
 ### Key Components
 
@@ -76,7 +76,7 @@ We wanted to make project management fun and something people actually look forw
 - **Firebase API**: Real-time database and authentication for storing and managing project data, allowing teams to collaborate and update tasks in real time. 
 - **Victory**: Charting library for rendering analytics, making it easy to track sprint progress and visualize team statistics.
 
-## Future Improvements
+## 🌐 Future Improvements
 
 - **Task Comments and Attachments**: Allow team members to add comments and attach files to tasks, enhancing collaboration and detail-sharing.
 - **Enhanced User Roles and Permissions**: Add user roles such as Admin, Member, and Viewer, each with specific permissions for creating, editing, or viewing tasks.
