@@ -24,15 +24,13 @@ export default function SideNav({ activeButton, setActiveButton }) {
     return (
         <div className='sidenav-container'>
             <div className='logo-cont'>
-                <div className='logo-placeholder'>
-                    <span>Logo</span>
-                </div>
+            <img src={`${process.env.PUBLIC_URL}/logo.png`} alt="Side Nav Logo" className="sidenav-logo" />
             </div>
             <div className='btns-cont'>
                 {/* Moving vertical line indicator */}
                 <div 
                     className="active-indicator" 
-                    style={{ top: `${activeIndex * 125}px` }} /* 100px button height + 20px margin */
+                    style={{ top: `${activeIndex * 126}px` }} /* 100px button height + 20px margin */
                 />
 
                 <button 

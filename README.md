@@ -68,10 +68,10 @@ The CSS files include styles for both dark and light modes, integrated into the 
 
 - **React**: Frontend framework for building a responsive, interactive UI.
 - **@react-three/fiber**: Integrates Three.js with React for the 3D tree visualizations.
-- **Firebase Firestore**: Real-time database for storing and managing project data, allowing teams to collaborate and update tasks in real time.
+- **Firebase API**: Real-time database and authentication for storing and managing project data, allowing teams to collaborate and update tasks in real time. 
 - **Victory**: Charting library for rendering analytics, making it easy to track sprint progress and visualize team statistics.
 
-## Future Upgrades
+## Future Improvements
 
 - **Task Comments and Attachments**: Allow team members to add comments and attach files to tasks, enhancing collaboration and detail-sharing.
 - **Enhanced User Roles and Permissions**: Add user roles such as Admin, Member, and Viewer, each with specific permissions for creating, editing, or viewing tasks.

@@ -137,3 +137,11 @@
         height: 20px;
     }
 }
+.sidenav-logo {
+    width: 100%;
+    max-width: 150px; /* Adjust as needed */
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+

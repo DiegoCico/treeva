@@ -82,9 +82,9 @@
 //         if (shouldAnimateCamera.current && animatedTreeRef.current) {
 //             // Update the camera position to follow the tree
 //             const targetPos = new THREE.Vector3(
-//                 animatedTreeRef.current.position.x,
-//                 animatedTreeRef.current.position.y + 7, // Increase height of camera when it rises
-//                 animatedTreeRef.current.position.z + 5
+//                 animatedTreeRef.current.position.x + 2, // Move camera to the right when the tree reaches max height
+//                 animatedTreeRef.current.position.y + 10, // Increase height of camera when it rises
+//                 animatedTreeRef.current.position.z + 10
 //             );
 //             camera.position.lerp(targetPos, 0.1); // Make the zoom in faster
 //             camera.lookAt(animatedTreeRef.current.position.x, animatedTreeRef.current.position.y, animatedTreeRef.current.position.z);
@@ -248,7 +248,6 @@
 
 
 
-
 import React, { Suspense, useEffect, useState, useRef } from "react";
 import { Canvas, useLoader, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls } from '@react-three/drei';
@@ -334,8 +333,8 @@ function CameraAnimation({ shouldAnimateCamera, animatedTreeRef, orbitControlsRe
             // Update the camera position to follow the tree
             const targetPos = new THREE.Vector3(
                 animatedTreeRef.current.position.x + 2, // Move camera to the right when the tree reaches max height
-                animatedTreeRef.current.position.y + 10, // Increase height of camera when it rises
-                animatedTreeRef.current.position.z + 10
+                animatedTreeRef.current.position.y + 7, // Increase height of camera when it rises
+                animatedTreeRef.current.position.z + 5
             );
             camera.position.lerp(targetPos, 0.1); // Make the zoom in faster
             camera.lookAt(animatedTreeRef.current.position.x, animatedTreeRef.current.position.y, animatedTreeRef.current.position.z);
@@ -492,7 +491,69 @@ export default function IslandScene({ sprintsData }) {
                     {hoveredTree.sprintName}
                 </div>
             )}
-        </>
+
+            {/* Popups on the left and right of the tree */}
+            {hoveredTree && (
+                <>
+                    <div
+                        style={{
+                            position: 'absolute',
+                            top: `calc(50% + ${hoveredTree.y * 10}px)`,
+                            left: `calc(50% + ${hoveredTree.x * 10 - 100}px)`,
+                            transform: 'translate(-50%, -50%)',
+                            padding: '10px',
+                            background: 'rgba(0, 0, 0, 0.7)',
+                            color: 'white',
+                            borderRadius: '5px',
+                            fontWeight: 'bold'
+                        }}
+                    >
+                        Left Popup Content
+                    </div>
+                    <div
+                        style={{
+                            position: 'absolute',
+                            top: `calc(50% + ${hoveredTree.y * 10}px)`,
+                            left: `calc(50% + ${hoveredTree.x * 10 + 100}px)`,
+                            transform: 'translate(-50%, -50%)',
+                            padding: '10px',
+                            background: 'rgba(0, 0, 0, 0.7)',
+                            color: 'white',
+                            borderRadius: '5px',
+                            fontWeight: 'bold'
+                        }}
+                    >
+                        Right Popup Content
+                    </div>
+                </>
+            )}
+
+            {/* Back button below the tree */}
+            {hoveredTree && (
+                <div
+                    style={{
+                        position: 'absolute',
+                        top: `calc(50% + ${hoveredTree.y * 10 + 100}px)`,
+                        left: `calc(50% + ${hoveredTree.x * 10}px)`,
+                        transform: 'translate(-50%, -50%)',
+                        padding: '10px',
+                        background: 'rgba(0, 0, 0, 0.7)',
+                        color: 'white',
+                        borderRadius: '5px',
+                        fontWeight: 'bold',
+                        cursor: 'pointer'
+                    }}
+                    onClick={() => {
+                        if (previousTreeRef.current) {
+                            previousTreeRef.current.userData.isAnimating = true;
+                            previousTreeRef.current.userData.direction = 'down';
+                        }
+                        setHoveredTree(null);
+                    }}
+                >
+                    Back
+                </div>
+            )}
+       </>
     );
 }
-
