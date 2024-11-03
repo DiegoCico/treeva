@@ -1,11 +1,10 @@
-// Sprint.js
-
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { db } from '../firebase';
 import { collection, doc, setDoc, getDocs, query, orderBy, limit, updateDoc } from 'firebase/firestore';
 import '../css/Sprint.css';
 import TaskComponent from '../components/Task';
+import Analytics from './Analytics';
 
 const Sprint = () => {
   const { userId, workspaceCode } = useParams(); 
@@ -14,6 +13,7 @@ const Sprint = () => {
   const [newSprintName, setNewSprintName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+  const [showAnalytics, setShowAnalytics] = useState(false); // New state for toggling Analytics view
 
   console.log("Workspace Code:", workspaceCode);
   console.log("User ID:", userId);
@@ -124,8 +124,15 @@ const Sprint = () => {
             <button className="end-sprint-btn" onClick={handleEndSprint} disabled={sprint.hasEnded}>
               {sprint.hasEnded ? 'Sprint Ended' : 'End Sprint'}
             </button>
+            <button className="analytics-btn" onClick={() => setShowAnalytics(!showAnalytics)}>
+              {showAnalytics ? 'Back to Tasks' : 'Analytics'}
+            </button>
           </div>
-          <TaskComponent workspaceCode={workspaceCode} sprintId={sprint.id} />
+          {showAnalytics ? (
+            <Analytics workspaceCode={workspaceCode} sprintId={sprint.id} />
+          ) : (
+            <TaskComponent workspaceCode={workspaceCode} sprintId={sprint.id} />
+          )}
         </>
       ) : (
         <p>No active sprint found.</p>

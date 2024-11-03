@@ -1,0 +1,58 @@
+.analytics-container {
+    padding: 20px;
+  }
+  
+  .analytics-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .analytics-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    max-height: 80px; /* Initial collapsed height */
+  }
+  
+  .analytics-item.expanded {
+    max-height: 600px; /* Adjust as needed for expanded content */
+    padding: 20px;
+  }
+  
+  .analytics-item:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .analytics-item-left {
+    font-weight: bold;
+  }
+  
+  .analytics-item-right p {
+    margin: 5px 0;
+  }
+  
+  .analytics-chart {
+    margin-top: 15px;
+  }
+  
+  .analytics-details {
+    margin-top: 15px;
+  }
+  
+  .team-stats {
+    margin-top: 20px;
+  }
+  
+  .team-stat-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+  }
+  

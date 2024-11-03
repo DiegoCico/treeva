@@ -33,7 +33,7 @@ export default function UserProfile({ userData, workspace, workspaceCode }) {
                 // Fetch the current sprint with hasEnded set to false
                 const sprintQuery = query(collection(db, "workspace", workspaceCode, "sprints"), where("hasEnded", "==", false));
                 const sprintSnapshot = await getDocs(sprintQuery);
-                const currentSprint = sprintSnapshot.docs[0]; // Assuming there is only one current sprint
+                const currentSprint = sprintSnapshot.docs[0];
 
                 if (!currentSprint) {
                     console.warn("No active sprint found.");
@@ -51,7 +51,6 @@ export default function UserProfile({ userData, workspace, workspaceCode }) {
 
                 setTasks(tasksData);
 
-                // Calculate completion percentage based on tickets assigned to the user
                 let userClosedTickets = 0;
                 let userTotalTickets = 0;
 
@@ -59,15 +58,16 @@ export default function UserProfile({ userData, workspace, workspaceCode }) {
                     task.tickets.forEach(ticket => {
                         if (ticket.assignee === userData.name) {
                             userTotalTickets++;
-                            if (ticket.status === "closed") {
+                            if (task.title === "Close") {
                                 userClosedTickets++;
                             }
                         }
                     });
                 });
 
+                console.log("close " + userClosedTickets)
+                console.log("total " + userTotalTickets)
                 const calculatedProgress = userTotalTickets === 0 ? 100 : Math.round((userClosedTickets / userTotalTickets) * 100);
-                
                 setProgress(calculatedProgress);
             } catch (error) {
                 console.error("Error fetching tasks:", error);

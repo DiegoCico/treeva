@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase.js';
-import { collection, doc, getDoc, getDocs, setDoc, updateDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, setDoc, updateDoc, writeBatch } from 'firebase/firestore';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Modal from './Modal';
@@ -10,7 +10,10 @@ import '../css/Task.css';
 
 const ItemTypes = {
   TICKET: 'TICKET',
+  COLUMN: 'COLUMN',
 };
+
+const REQUIRED_COLUMNS = ["To Do", "Close"];
 
 const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
   const [tasks, setTasks] = useState([]);
@@ -25,8 +28,9 @@ const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
     assigner: null,
     difficulty: '',
   });
+  const [editingTaskId, setEditingTaskId] = useState(null);
+  const [newTaskTitle, setNewTaskTitle] = useState('');
 
-  // Fetch tasks and users data from Firebase
   useEffect(() => {
     const fetchTasks = async () => {
       try {
@@ -38,6 +42,18 @@ const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
           tickets: taskDoc.data().tickets || [],
         }));
         taskData.sort((a, b) => a.order - b.order);
+
+        const existingIds = taskData.map(task => task.id);
+        const missingColumns = REQUIRED_COLUMNS.filter(id => !existingIds.includes(id));
+
+        if (missingColumns.length > 0) {
+          for (let columnId of missingColumns) {
+            const newColumn = await createRequiredColumn(columnId, taskData.length);
+            taskData.push(newColumn);
+          }
+          taskData.sort((a, b) => a.order - b.order);
+        }
+
         setTasks(taskData);
       } catch (error) {
         console.error("Error fetching tasks:", error);
@@ -66,6 +82,23 @@ const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
     fetchUsers();
   }, [workspaceCode, sprintId]);
 
+  const createRequiredColumn = async (id, order) => {
+    const newTask = {
+      title: id,
+      createdAt: new Date(),
+      tickets: [],
+      order,
+    };
+
+    try {
+      const newTaskRef = doc(db, `workspace/${workspaceCode}/sprints/${sprintId}/tasks`, id);
+      await setDoc(newTaskRef, newTask);
+      return { id: newTaskRef.id, ...newTask };
+    } catch (error) {
+      console.error(`Error creating column "${id}":`, error);
+    }
+  };
+
   const createNewColumn = async () => {
     const newTask = {
       title: `New Column ${tasks.length + 1}`,
@@ -73,7 +106,7 @@ const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
       tickets: [],
       order: tasks.length,
     };
-  
+
     try {
       const newTaskRef = doc(collection(db, `workspace/${workspaceCode}/sprints/${sprintId}/tasks`));
       await setDoc(newTaskRef, newTask);
@@ -83,25 +116,97 @@ const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
     }
   };
 
-  const updateTaskTicketsInFirebase = async (taskId, tickets) => {
-    try {
-      const taskRef = doc(db, `workspace/${workspaceCode}/sprints/${sprintId}/tasks`, taskId);
-      await updateDoc(taskRef, { tickets });
-    } catch (error) {
-      console.error("Error updating task tickets:", error);
-    }
+  const updateTaskOrderInFirebase = async (updatedTasks) => {
+    const batch = writeBatch(db);
+    updatedTasks.forEach((task, index) => {
+      const taskRef = doc(db, `workspace/${workspaceCode}/sprints/${sprintId}/tasks`, task.id);
+      batch.update(taskRef, { order: index });
+    });
+    await batch.commit();
   };
 
-  const TaskColumn = ({ task }) => {
-    const [, ref] = useDrop({
-      accept: ItemTypes.TICKET,
-      drop: (item) => handleDrop(item, task.id),
+  const moveColumn = (dragIndex, hoverIndex) => {
+    const dragTask = tasks[dragIndex];
+
+    if (REQUIRED_COLUMNS.includes(dragTask.id)) {
+      return;
+    }
+
+    const updatedTasks = [...tasks];
+    const [movedTask] = updatedTasks.splice(dragIndex, 1);
+    updatedTasks.splice(hoverIndex, 0, movedTask);
+
+    updatedTasks.forEach((task, index) => (task.order = index));
+    setTasks(updatedTasks);
+    updateTaskOrderInFirebase(updatedTasks);
+  };
+
+  const TaskColumn = ({ task, index }) => {
+    const [, dropRef] = useDrop({
+      accept: [ItemTypes.COLUMN, ItemTypes.TICKET],
+      hover: (item) => {
+        if (item.type === ItemTypes.COLUMN && item.index !== index) {
+          moveColumn(item.index, index);
+          item.index = index;
+        }
+      },
+      drop: (item) => {
+        if (item.type === ItemTypes.TICKET && item.taskId !== task.id) {
+          moveTicket(item.taskId, task.id, item.ticketId);
+        }
+      },
     });
 
+    const [{ isDragging }, dragRef] = useDrag({
+      type: ItemTypes.COLUMN,
+      item: { id: task.id, index, type: ItemTypes.COLUMN },
+      canDrag: !REQUIRED_COLUMNS.includes(task.id),
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
+    });
+
+    const handleDoubleClick = () => {
+      setEditingTaskId(task.id);
+      setNewTaskTitle(task.title);
+    };
+
+    const handleTitleChange = (e) => {
+      setNewTaskTitle(e.target.value);
+    };
+
+    const handleTitleBlur = async () => {
+      if (newTaskTitle !== task.title) {
+        try {
+          const taskRef = doc(db, `workspace/${workspaceCode}/sprints/${sprintId}/tasks`, task.id);
+          await updateDoc(taskRef, { title: newTaskTitle });
+
+          setTasks((prevTasks) =>
+            prevTasks.map((t) => (t.id === task.id ? { ...t, title: newTaskTitle } : t))
+          );
+        } catch (error) {
+          console.error("Error renaming task column:", error);
+        }
+      }
+      setEditingTaskId(null);
+    };
+
     return (
-      <div ref={ref} className="task-column">
+      <div ref={(node) => dragRef(dropRef(node))} className="task-column" style={{ opacity: isDragging ? 0.5 : 1 }}>
         <div className="task-header">
-          <h3>{task.title}</h3>
+          {editingTaskId === task.id ? (
+            <input
+              type="text"
+              value={newTaskTitle}
+              onChange={handleTitleChange}
+              onBlur={handleTitleBlur}
+              onKeyDown={(e) => e.key === 'Enter' && handleTitleBlur()}
+              autoFocus
+              className="task-title-input"
+            />
+          ) : (
+            <h3 onDoubleClick={handleDoubleClick}>{task.title}</h3>
+          )}
           {task.title === "To Do" && <button onClick={() => openModal(task.id)}>Add Ticket</button>}
         </div>
         <div className="ticket-list">
@@ -116,7 +221,7 @@ const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
   const TicketItem = ({ ticket, taskId }) => {
     const [{ isDragging }, dragRef] = useDrag({
       type: ItemTypes.TICKET,
-      item: { id: ticket.id, taskId },
+      item: { id: ticket.id, taskId, ticketId: ticket.id, type: ItemTypes.TICKET },
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),
       }),
@@ -129,37 +234,44 @@ const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
     );
   };
 
-  const handleDrop = async (item, destinationTaskId) => {
-    const { id: ticketId, taskId: sourceTaskId } = item;
-    if (sourceTaskId === destinationTaskId) return;
-
+  const moveTicket = async (sourceTaskId, destinationTaskId, ticketId) => {
     const sourceTask = tasks.find((task) => task.id === sourceTaskId);
     const destinationTask = tasks.find((task) => task.id === destinationTaskId);
     const movedTicket = sourceTask.tickets.find((ticket) => ticket.id === ticketId);
 
-    // Remove ticket from source task and add to destination task
     const updatedSourceTickets = sourceTask.tickets.filter((ticket) => ticket.id !== ticketId);
-    const updatedDestinationTickets = [...destinationTask.tickets, movedTicket];
+    const updatedDestinationTickets = [...destinationTask.tickets];
 
-    // Update state
-    setTasks((prevTasks) =>
-      prevTasks.map((task) => {
-        if (task.id === sourceTaskId) {
-          return { ...task, tickets: updatedSourceTickets };
-        } else if (task.id === destinationTaskId) {
-          return { ...task, tickets: updatedDestinationTickets };
-        } else {
-          return task;
-        }
-      })
-    );
+    const ticketToUpdate = { ...movedTicket };
+    if (destinationTask.title === "Close") {
+      ticketToUpdate.closedAt = new Date();
+    }
+    updatedDestinationTickets.push(ticketToUpdate);
 
-    // Update Firebase
+    const updatedTasks = tasks.map((task) => {
+      if (task.id === sourceTaskId) {
+        return { ...task, tickets: updatedSourceTickets };
+      } else if (task.id === destinationTaskId) {
+        return { ...task, tickets: updatedDestinationTickets };
+      } else {
+        return task;
+      }
+    });
+
+    setTasks(updatedTasks);
     await updateTaskTicketsInFirebase(sourceTaskId, updatedSourceTickets);
     await updateTaskTicketsInFirebase(destinationTaskId, updatedDestinationTickets);
   };
 
-  // Modal handlers
+  const updateTaskTicketsInFirebase = async (taskId, tickets) => {
+    try {
+      const taskRef = doc(db, `workspace/${workspaceCode}/sprints/${sprintId}/tasks`, taskId);
+      await updateDoc(taskRef, { tickets });
+    } catch (error) {
+      console.error("Error updating task tickets:", error);
+    }
+  };
+
   const openModal = (taskId) => {
     setSelectedTaskId(taskId);
     setModalOpen(true);
@@ -192,7 +304,7 @@ const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
     const task = tasks.find((task) => task.id === selectedTaskId);
 
     const newTicket = {
-      id: Date.now().toString(), // Unique ID for the ticket
+      id: Date.now().toString(),
       ...ticketData,
       assignee: ticketData.assignee ? ticketData.assignee.name : '',
       assigner: ticketData.assigner ? ticketData.assigner.name : '',
@@ -200,11 +312,9 @@ const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
     };
 
     try {
-      // Add the new ticket directly to the task's tickets array in Firebase
       const updatedTickets = [...task.tickets, newTicket];
       await updateTaskTicketsInFirebase(selectedTaskId, updatedTickets);
 
-      // Update local state
       setTasks((prevTasks) =>
         prevTasks.map((task) =>
           task.id === selectedTaskId ? { ...task, tickets: updatedTickets } : task
@@ -221,8 +331,8 @@ const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
       <div className="task-container">
         <h2>Tasks</h2>
         <div className="tasks">
-          {tasks.map((task) => (
-            <TaskColumn key={task.id} task={task} />
+          {tasks.map((task, index) => (
+            <TaskColumn key={task.id} task={task} index={index} />
           ))}
         </div>
         <div className="create-task-box" onClick={createNewColumn}>+ Create Task</div>
