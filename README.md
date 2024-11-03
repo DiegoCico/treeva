@@ -54,8 +54,9 @@ The CSS files include styles for both dark and light modes, integrated into the 
 ### Firebase Structure
 
 - **Users**: Stores user profile information, including personal details and contact information.
-- **Workspaces**: Contains workspace-level data, including sprints, tasks, and team members.
-- **Sprints**: Holds task data, each containing a series of tickets for more granular tracking.
+- **Workspaces**: Contains workspace-level data, including sprints, tasks, and team members. Holds task data, each containing a series of tickets for more granular tracking.
+
+![alt text](FirebaseStructure.png)
 
 ### Customization
 
@@ -69,3 +70,12 @@ The CSS files include styles for both dark and light modes, integrated into the 
 - **@react-three/fiber**: Integrates Three.js with React for the 3D tree visualizations.
 - **Firebase Firestore**: Real-time database for storing and managing project data, allowing teams to collaborate and update tasks in real time.
 - **Victory**: Charting library for rendering analytics, making it easy to track sprint progress and visualize team statistics.
+
+## Future Upgrades
+
+- **Task Comments and Attachments**: Allow team members to add comments and attach files to tasks, enhancing collaboration and detail-sharing.
+- **Enhanced User Roles and Permissions**: Add user roles such as Admin, Member, and Viewer, each with specific permissions for creating, editing, or viewing tasks.
+- **Notifications and Reminders**: Implement a notification system for upcoming deadlines and reminders for incomplete tasks.
+- **Enhanced Analytics**: Add more detailed charts and graphs, such as individual performance analytics, sprint overviews, and burndown charts.
+- **Integrations with Other Platforms**: Support integrations with popular platforms like Slack, Trello, and Google Calendar for cross-platform synchronization.
+- **AI-Powered Task Recommendations**: Use machine learning to analyze user productivity and suggest task prioritization or workflow improvements.

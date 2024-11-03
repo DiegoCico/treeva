@@ -36,10 +36,21 @@
 //     // Animation logic
 //     useFrame(() => {
 //         if (treeRef.current && treeRef.current.userData.isAnimating) {
-//             treeRef.current.rotation.y += 0.05; // Rotate the tree on Y-axis
-//             treeRef.current.position.y += 0.02; // Rise the tree
-//             if (treeRef.current.position.y > 3) {
-//                 treeRef.current.userData.isAnimating = false;
+//             if (treeRef.current.userData.direction === 'up') {
+//                 treeRef.current.rotation.y += 0.1; // Rotate the tree on Y-axis faster
+//                 treeRef.current.position.y += 0.04; // Rise the tree faster
+//                 if (treeRef.current.position.y > 3) {
+//                     treeRef.current.userData.isAnimating = false;
+//                     treeRef.current.userData.direction = null;
+//                 }
+//             } else if (treeRef.current.userData.direction === 'down') {
+//                 treeRef.current.rotation.y -= 0.1; // Rotate the tree on Y-axis faster
+//                 treeRef.current.position.y -= 0.04; // Lower the tree faster
+//                 if (treeRef.current.position.y <= 0.2) {
+//                     treeRef.current.position.y = 0.2;
+//                     treeRef.current.userData.isAnimating = false;
+//                     treeRef.current.userData.direction = null;
+//                 }
 //             }
 //         }
 //     });
@@ -48,7 +59,7 @@
 //         <group
 //             ref={treeRef}
 //             position={[x, y, z]}
-//             onPointerOver={() => setHoveredTree({ sprintName, x: x + 1.5, y: y + 2.5, z })}
+//             onPointerOver={() => setHoveredTree({ sprintName, x: x - 1.5, y: y + 2.5, z })}
 //             onPointerOut={() => setHoveredTree(null)}
 //             onClick={() => onClick(treeRef, x, y, z)}
 //         >
@@ -72,13 +83,13 @@
 //             // Update the camera position to follow the tree
 //             const targetPos = new THREE.Vector3(
 //                 animatedTreeRef.current.position.x,
-//                 animatedTreeRef.current.position.y + 2,
+//                 animatedTreeRef.current.position.y + 7, // Increase height of camera when it rises
 //                 animatedTreeRef.current.position.z + 5
 //             );
-//             camera.position.lerp(targetPos, 0.05);
+//             camera.position.lerp(targetPos, 0.1); // Make the zoom in faster
 //             camera.lookAt(animatedTreeRef.current.position.x, animatedTreeRef.current.position.y, animatedTreeRef.current.position.z);
 //             if (orbitControlsRef.current) {
-//                 orbitControlsRef.current.target.lerp(animatedTreeRef.current.position, 0.05);
+//                 orbitControlsRef.current.target.lerp(animatedTreeRef.current.position, 0.1);
 //                 orbitControlsRef.current.update();
 //             }
 //             if (camera.position.distanceTo(targetPos) < 0.1) {
@@ -98,6 +109,7 @@
 //     const shouldAnimateCamera = useRef(false);
 //     const animatedTreeRef = useRef(null);
 //     const orbitControlsRef = useRef(null);
+//     const previousTreeRef = useRef(null);
 
 //     useEffect(() => {
 //         const canvasElement = document.querySelector('canvas');
@@ -146,8 +158,15 @@
 
 //     const handleTreeClick = (treeRef, x, y, z) => {
 //         if (treeRef.current) {
-//             // Set the animation flag
+//             // Lower the previous tree if it's different from the current one
+//             if (previousTreeRef.current && previousTreeRef.current !== treeRef.current) {
+//                 previousTreeRef.current.userData.isAnimating = true;
+//                 previousTreeRef.current.userData.direction = 'down';
+//             }
+
+//             // Set the animation flag for the new tree
 //             treeRef.current.userData.isAnimating = true;
+//             treeRef.current.userData.direction = 'up';
 
 //             // Set target position for camera animation
 //             animatedTreeRef.current = treeRef.current;
@@ -155,6 +174,9 @@
 //             if (orbitControlsRef.current) {
 //                 orbitControlsRef.current.enabled = false; // Disable controls during animation
 //             }
+
+//             // Update the previous tree reference
+//             previousTreeRef.current = treeRef.current;
 //         }
 //     };
 
@@ -162,7 +184,7 @@
 //         <>
 //             <Suspense fallback={<div>Loading...</div>}>
 //                 <Canvas
-//                     camera={{ position: [5, 5, 10], fov:  50}}
+//                     camera={{ position: [5, 10, 10], fov: 45 }} // Raise initial camera height
 //                     style={{ width: '100%', height: 'calc(100vh - 150px)' }}
 //                     gl={{ preserveDrawingBuffer: true }}
 //                     dpr={Math.min(window.devicePixelRatio, 2)}
@@ -226,6 +248,7 @@
 
 
 
+
 import React, { Suspense, useEffect, useState, useRef } from "react";
 import { Canvas, useLoader, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls } from '@react-three/drei';
@@ -264,10 +287,21 @@ function StageTree({ stage, x, z, setHoveredTree, sprintName, onClick }) {
     // Animation logic
     useFrame(() => {
         if (treeRef.current && treeRef.current.userData.isAnimating) {
-            treeRef.current.rotation.y += 0.05; // Rotate the tree on Y-axis
-            treeRef.current.position.y += 0.02; // Rise the tree
-            if (treeRef.current.position.y > 3) {
-                treeRef.current.userData.isAnimating = false;
+            if (treeRef.current.userData.direction === 'up') {
+                treeRef.current.rotation.y += 0.1; // Rotate the tree on Y-axis faster
+                treeRef.current.position.y += 0.04; // Rise the tree faster
+                if (treeRef.current.position.y > 3) {
+                    treeRef.current.userData.isAnimating = false;
+                    treeRef.current.userData.direction = null;
+                }
+            } else if (treeRef.current.userData.direction === 'down') {
+                treeRef.current.rotation.y -= 0.1; // Rotate the tree on Y-axis faster
+                treeRef.current.position.y -= 0.04; // Lower the tree faster
+                if (treeRef.current.position.y <= 0.2) {
+                    treeRef.current.position.y = 0.2;
+                    treeRef.current.userData.isAnimating = false;
+                    treeRef.current.userData.direction = null;
+                }
             }
         }
     });
@@ -299,14 +333,14 @@ function CameraAnimation({ shouldAnimateCamera, animatedTreeRef, orbitControlsRe
         if (shouldAnimateCamera.current && animatedTreeRef.current) {
             // Update the camera position to follow the tree
             const targetPos = new THREE.Vector3(
-                animatedTreeRef.current.position.x,
-                animatedTreeRef.current.position.y + 7, // Increase height of camera when it rises
-                animatedTreeRef.current.position.z + 5
+                animatedTreeRef.current.position.x + 2, // Move camera to the right when the tree reaches max height
+                animatedTreeRef.current.position.y + 10, // Increase height of camera when it rises
+                animatedTreeRef.current.position.z + 10
             );
-            camera.position.lerp(targetPos, 0.03); // Make the zoom in slower
+            camera.position.lerp(targetPos, 0.1); // Make the zoom in faster
             camera.lookAt(animatedTreeRef.current.position.x, animatedTreeRef.current.position.y, animatedTreeRef.current.position.z);
             if (orbitControlsRef.current) {
-                orbitControlsRef.current.target.lerp(animatedTreeRef.current.position, 0.05);
+                orbitControlsRef.current.target.lerp(animatedTreeRef.current.position, 0.1);
                 orbitControlsRef.current.update();
             }
             if (camera.position.distanceTo(targetPos) < 0.1) {
@@ -326,6 +360,7 @@ export default function IslandScene({ sprintsData }) {
     const shouldAnimateCamera = useRef(false);
     const animatedTreeRef = useRef(null);
     const orbitControlsRef = useRef(null);
+    const previousTreeRef = useRef(null);
 
     useEffect(() => {
         const canvasElement = document.querySelector('canvas');
@@ -374,8 +409,15 @@ export default function IslandScene({ sprintsData }) {
 
     const handleTreeClick = (treeRef, x, y, z) => {
         if (treeRef.current) {
-            // Set the animation flag
+            // Lower the previous tree if it's different from the current one
+            if (previousTreeRef.current && previousTreeRef.current !== treeRef.current) {
+                previousTreeRef.current.userData.isAnimating = true;
+                previousTreeRef.current.userData.direction = 'down';
+            }
+
+            // Set the animation flag for the new tree
             treeRef.current.userData.isAnimating = true;
+            treeRef.current.userData.direction = 'up';
 
             // Set target position for camera animation
             animatedTreeRef.current = treeRef.current;
@@ -383,6 +425,9 @@ export default function IslandScene({ sprintsData }) {
             if (orbitControlsRef.current) {
                 orbitControlsRef.current.enabled = false; // Disable controls during animation
             }
+
+            // Update the previous tree reference
+            previousTreeRef.current = treeRef.current;
         }
     };
 
@@ -390,7 +435,7 @@ export default function IslandScene({ sprintsData }) {
         <>
             <Suspense fallback={<div>Loading...</div>}>
                 <Canvas
-                    camera={{ position: [5, 1, 10], fov: 45 }} // Raise initial camera height
+                    camera={{ position: [5, 10, 10], fov: 45 }} // Raise initial camera height
                     style={{ width: '100%', height: 'calc(100vh - 150px)' }}
                     gl={{ preserveDrawingBuffer: true }}
                     dpr={Math.min(window.devicePixelRatio, 2)}
@@ -450,5 +495,4 @@ export default function IslandScene({ sprintsData }) {
         </>
     );
 }
-
 
