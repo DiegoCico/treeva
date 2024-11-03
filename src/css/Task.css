@@ -43,33 +43,50 @@ body.dark-mode {
     color: var(--text-color);
 }
 
-/* Container for all task columns */
+.task-container {
+    padding: 20px;
+    background-color: var(--background-color);
+    overflow-x: auto; /* Enable horizontal scrolling */
+    white-space: nowrap; /* Prevent items from wrapping */
+    font-family: Arial, sans-serif;
+    color: var(--text-color);
+}
+
 .tasks {
-    display: flex;
-    gap: 24px;
+    display: inline-flex; /* Display tasks in a horizontal row */
+    gap: 24px; /* Space between columns */
     padding: 10px 0;
     align-items: flex-start;
+    flex-wrap: nowrap; /* Prevent wrapping */
+    overflow-x: auto; /* Enable scrolling within the tasks */
+    scroll-snap-type: x mandatory; /* Enable snap scrolling */
 }
 
-/* Styling for the create new task column button */
+.task-column,
 .create-task-box {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 150px;
-    height: 200px;
-    background-color: rgba(200, 200, 200, 0.3); /* Light gray tint */
-    border: 2px dotted rgba(100, 100, 100, 0.5); /* Dotted border */
-    color: var(--text-color);
-    font-weight: bold;
     text-align: center;
-    cursor: pointer;
-    border-radius: 8px;
-    transition: background-color 0.3s ease;
+    scroll-snap-align: start; /* Snap columns to start of the viewport */
+    min-width: 280px;
+    max-width: 300px;
+    min-height: 600px;
+    background-color: var(--column-background);
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px var(--shadow-color);
+    flex-shrink: 0; /* Prevent columns from shrinking */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow-y: auto;
 }
+
 
 .create-task-box:hover {
-    background-color: rgba(200, 200, 200, 0.5); /* Darker tint on hover */
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px var(--shadow-color);
+    background-color: rgba(200, 200, 200, 0.5); /* Adjusted tint on hover */
 }
 
 /* Styling for each task column */

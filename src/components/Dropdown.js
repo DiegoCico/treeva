@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../css/Dropdown.css';
 
-const Dropdown = ({ options, selected, onSelect, placeholder }) => {
+const Dropdown = ({ options, selected, onSelect, placeholder, darkMode }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleSelect = (option) => {
@@ -10,7 +10,7 @@ const Dropdown = ({ options, selected, onSelect, placeholder }) => {
   };
 
   return (
-    <div className="dropdown">
+    <div className={`dropdown ${darkMode ? 'dropdown-dark' : ''}`}>
       <div className="dropdown-selected" onClick={() => setIsOpen(!isOpen)}>
         {selected ? (
           <>

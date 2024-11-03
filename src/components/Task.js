@@ -336,27 +336,47 @@ const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
           {tasks.map((task, index) => (
             <TaskColumn key={task.id} task={task} index={index} />
           ))}
+          {/* "Create Task" box as the last item in the row */}
+          <div className="create-task-box" onClick={createNewColumn}>+ Create Task</div>
         </div>
-        <div className="create-task-box" onClick={createNewColumn}>+ Create Task</div>
       </div>
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <h2>Add New Ticket</h2>
         <form onSubmit={submitTicket}>
-          <input type="text" name="title" placeholder="Title" onChange={handleTicketInput} value={ticketData.title} required />
-          <textarea name="description" placeholder="Description" onChange={handleTicketInput} value={ticketData.description} required></textarea>
-          <input type="text" name="category" placeholder="Category" onChange={handleTicketInput} value={ticketData.category} />
+          <input
+            type="text"
+            name="title"
+            placeholder="Title"
+            onChange={handleTicketInput}
+            value={ticketData.title}
+            required
+          />
+          <textarea
+            name="description"
+            placeholder="Description"
+            onChange={handleTicketInput}
+            value={ticketData.description}
+            required
+          ></textarea>
+          <input
+            type="text"
+            name="category"
+            placeholder="Category"
+            onChange={handleTicketInput}
+            value={ticketData.category}
+          />
           <label>Assignee</label>
           <Dropdown
             options={workspaceUsers}
             selected={ticketData.assignee}
-            onSelect={(user) => setTicketData(prev => ({ ...prev, assignee: user }))}
+            onSelect={(user) => setTicketData((prev) => ({ ...prev, assignee: user }))}
             placeholder="Select Assignee"
           />
           <label>Assigner</label>
           <Dropdown
             options={workspaceUsers}
             selected={ticketData.assigner}
-            onSelect={(user) => setTicketData(prev => ({ ...prev, assigner: user }))}
+            onSelect={(user) => setTicketData((prev) => ({ ...prev, assigner: user }))}
             placeholder="Select Assigner"
           />
           <select
@@ -376,6 +396,7 @@ const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
       </Modal>
     </DndProvider>
   );
+  
 };
 
 export default TaskComponent;
