@@ -56,3 +56,20 @@
     padding: 5px 0;
   }
   
+  .team-stats table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  
+  .team-stats th, .team-stats td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .team-stats th {
+    background-color: #f3f3f3;
+    font-weight: bold;
+  }
+  

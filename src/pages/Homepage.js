@@ -83,6 +83,13 @@ export default function Homepage() {
         }
     };
 
+    // this to make the page refresh when trees button clicked again
+    // useEffect(() => {
+    //     const savedActiveButton = localStorage.getItem('activeButton');
+    //     if (savedActiveButton) {
+    //         setActiveButton(savedActiveButton);
+    //     }
+    // }, []);
 
     useEffect(() => {
         if (userId) {

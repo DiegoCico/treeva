@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import '../css/SideNav.css';
 import { getAuth, signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
@@ -6,6 +6,10 @@ import { useNavigate } from 'react-router-dom';
 export default function SideNav({ activeButton, setActiveButton }) {
     const auth = getAuth();
     const navigate = useNavigate();
+
+    // Define buttons with unique identifiers
+    const buttons = ['user', 'sprints', 'trees', 'logout'];
+    const activeIndex = buttons.indexOf(activeButton); // Determine active button index
 
     const handleLogout = async () => {
         try {
@@ -20,12 +24,17 @@ export default function SideNav({ activeButton, setActiveButton }) {
     return (
         <div className='sidenav-container'>
             <div className='logo-cont'>
-                {/* <img src='/sidenav-logo.png' alt='logo' className='sidenav-logo'/> */}
                 <div className='logo-placeholder'>
-                    <span>Logo Placeholder</span>
+                    <span>Logo</span>
                 </div>
             </div>
             <div className='btns-cont'>
+                {/* Moving vertical line indicator */}
+                <div 
+                    className="active-indicator" 
+                    style={{ top: `${activeIndex * 125}px` }} /* 100px button height + 20px margin */
+                />
+
                 <button 
                     className={`icon-button ${activeButton === 'user' ? 'active' : ''}`} 
                     onClick={() => setActiveButton('user')}
@@ -48,11 +57,14 @@ export default function SideNav({ activeButton, setActiveButton }) {
             <div className='logout-btn-cont'>
                 <button 
                     className={`icon-button logout-button ${activeButton === 'logout' ? 'active' : ''}`} 
-                    onClick={handleLogout}
+                    onClick={() => {
+                        setActiveButton('logout');
+                        handleLogout();
+                    }}
                 >
                     <i className="fa-solid fa-right-from-bracket"></i>
                 </button>
             </div>
         </div>
-    )
+    );
 }

@@ -1,3 +1,4 @@
+/* Header container */
 .header-cont {
     background-color: #27AE60; /* Header background color */
     color: white;
@@ -7,19 +8,24 @@
     justify-content: space-between;
     align-items: center;
     grid-area: 1 / 1 / 2 / 7; /* Matches the header area in Homepage.css */
-    height: 100%; 
+    height: 100%;
+    transition: background-color 0.3s, color 0.3s;
 }
 
-.greeting {
+/* Greeting message styling */
+.greeting h1 {
     font-size: 20px;
+    margin: 0;
 }
 
+/* Actions container */
 .actions {
     display: flex;
     align-items: center;
     gap: 10px; /* Space between button and search bar */
 }
 
+/* Notification button styling */
 .notification-btn {
     background-color: white;
     color: #27AE60;
@@ -32,12 +38,18 @@
     width: 35px; /* Square button */
     border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.notification-btn:hover {
+    background-color: #e0e0e0;
 }
 
 .notification-btn i {
     font-size: 18px;
 }
 
+/* Search bar styling */
 .search-bar {
     background-color: white;
     color: #333;
@@ -45,8 +57,49 @@
     border-radius: 5px;
     height: 35px; /* Matches notification button height */
     width: 200px; /* Set width for search bar */
+    padding: 0 10px;
 }
 
 .search-bar::placeholder {
     color: #999; /* Placeholder text color */
+}
+
+/* Theme toggle button styling */
+.theme-toggle-button {
+    padding: 8px 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s, transform 0.2s;
+}
+
+/* Light mode button styling */
+.theme-toggle-button.light {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+/* Dark mode button styling */
+.theme-toggle-button.dark {
+    background-color: #333;
+    color: #f0f0f0;
+}
+
+/* Pressed animation */
+.theme-toggle-button:active {
+    transform: scale(0.95); /* Button press animation */
+}
+
+/* Dark mode styling for the entire page */
+body.dark-mode {
+    --bg-color: #222;
+    --text-color: #f0f0f0;
+}
+
+/* Light mode styling for the entire page */
+body.light-mode {
+    --bg-color: #fff;
+    --text-color: #222;
 }

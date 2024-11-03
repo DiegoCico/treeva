@@ -15,27 +15,19 @@ const Sprint = () => {
   const [loading, setLoading] = useState(true);
   const [showAnalytics, setShowAnalytics] = useState(false); // New state for toggling Analytics view
 
-  console.log("Workspace Code:", workspaceCode);
-  console.log("User ID:", userId);
-
   useEffect(() => {
     const fetchMostRecentSprint = async () => {
       try {
-        console.log("Fetching the most recent sprint...");
-
         const sprintRef = collection(db, `workspace/${workspaceCode}/sprints`);
         const sprintQuery = query(sprintRef, orderBy('createdAt', 'desc'), limit(1));
         
         const sprintSnapshot = await getDocs(sprintQuery);
-        console.log("Sprint Snapshot Size:", sprintSnapshot.size);
         
         if (sprintSnapshot.empty) {
-          console.log("No sprints found. Showing modal for creating a new sprint.");
           setShowModal(true);
         } else {
           sprintSnapshot.forEach((doc) => {
             const sprintData = { id: doc.id, ...doc.data() };
-            console.log("Fetched Sprint Data:", sprintData);
             setSprint(sprintData);
           });
         }
@@ -53,11 +45,8 @@ const Sprint = () => {
   }, [workspaceCode]);
 
   const handleCreateSprint = async () => {
-    console.log("Creating a new sprint...");
-
     if (!newSprintName) {
       setError("Sprint name is required.");
-      console.log("Error: Sprint name is required.");
       return;
     }
 
@@ -68,8 +57,6 @@ const Sprint = () => {
         hasEnded: false,
         createdAt: new Date(),
       };
-
-      console.log("New Sprint Data:", newSprint);
 
       await setDoc(sprintDocRef, newSprint);
       setSprint({ id: newSprintName, ...newSprint });
@@ -82,12 +69,9 @@ const Sprint = () => {
   };
 
   const handleEndSprint = async () => {
-    console.log("Ending the sprint...");
-
     try {
       const sprintDoc = doc(db, `workspace/${workspaceCode}/sprints`, sprint.id);
       await updateDoc(sprintDoc, { hasEnded: true });
-      console.log("Sprint marked as ended.");
       setSprint((prev) => ({ ...prev, hasEnded: true }));
       setShowModal(true);
     } catch (error) {

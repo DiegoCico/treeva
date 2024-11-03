@@ -7,7 +7,6 @@ import '../css/Analytics.css';
 const Analytics = ({ workspaceCode }) => {
   const [sprintData, setSprintData] = useState([]);
   const [expandedSprint, setExpandedSprint] = useState(null);
-  const [teamStats, setTeamStats] = useState([]); // Track team stats
 
   useEffect(() => {
     const fetchSprints = async () => {
@@ -47,8 +46,8 @@ const Analytics = ({ workspaceCode }) => {
 
                 if (createdAt) {
                   ticketsData.push({
-                    createdAt,
-                    closedAt,
+                    createdAt: createdAt.toISOString().split('T')[0],
+                    closedAt: closedAt ? closedAt.toISOString().split('T')[0] : null,
                   });
                 }
 
@@ -93,7 +92,7 @@ const Analytics = ({ workspaceCode }) => {
     }
 
     const data = ticketsData.map(ticket => ({
-      date: ticket.createdAt.toISOString().split('T')[0],
+      date: ticket.createdAt,
       open: 1,
       closed: ticket.closedAt ? 1 : 0,
     }));
@@ -123,6 +122,29 @@ const Analytics = ({ workspaceCode }) => {
           <div key={index} className={`analytics-item ${expandedSprint === index ? 'expanded' : ''}`} onClick={() => handleSprintClick(index)}>
             <div className="analytics-item-left">
               <h3>{sprint.name}</h3>
+              {expandedSprint === index && (
+                <div className="team-stats">
+                  <h4>Team Ticket Stats</h4>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Member</th>
+                        <th>Assigned</th>
+                        <th>Closed</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Object.keys(sprint.memberStats).map(member => (
+                        <tr key={member}>
+                          <td>{member}</td>
+                          <td>{sprint.memberStats[member].received}</td>
+                          <td>{sprint.memberStats[member].closed}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
             <div className="analytics-item-right">
               <p>Total Tickets: {sprint.totalTickets}</p>
@@ -133,7 +155,7 @@ const Analytics = ({ workspaceCode }) => {
               <div className="analytics-details">
                 <VictoryChart
                   containerComponent={<VictoryVoronoiContainer />}
-                  domainPadding={{ x: 20, y: 20 }}
+                  domainPadding={{ x: 30, y: 20 }}
                 >
                   <VictoryLegend x={125} y={10}
                     title="Ticket Progress"
@@ -141,61 +163,56 @@ const Analytics = ({ workspaceCode }) => {
                     gutter={20}
                     style={{ title: { fontSize: 15 } }}
                     data={[
-                      { name: "Open Tickets", symbol: { fill: "#8884d8" } },
-                      { name: "Closed Tickets", symbol: { fill: "#82ca9d" } }
+                      { name: "Open Tickets", symbol: { fill: "#4f81bd" } },
+                      { name: "Closed Tickets", symbol: { fill: "#c0504d" } }
                     ]}
                   />
                   <VictoryAxis
                     dependentAxis
-                    domain={[0, 'auto']}
                     label="Tickets"
                     style={{
-                      axisLabel: { padding: 30 },
+                      axisLabel: { padding: 35, fontSize: 12 },
+                      tickLabels: { fontSize: 10 },
+                      grid: { stroke: "#ddd", strokeDasharray: "4 4" },
                     }}
+                    tickFormat={(y) => `${y}`}
                   />
                   <VictoryAxis
-                    tickFormat={(t) => t}
+                    label="Date"
                     style={{
+                      axisLabel: { padding: 30, fontSize: 12 },
                       tickLabels: { fontSize: 10, angle: -45, textAnchor: 'end' },
+                      grid: { stroke: "#ddd", strokeDasharray: "4 4" },
                     }}
+                    tickFormat={(x) => `${x}`}
                   />
                   <VictoryLine
                     data={getChartData(sprint.ticketsData)}
                     x="date"
                     y="open"
+                    interpolation="monotoneX"
                     animate={{
-                      duration: 1000,
-                      onLoad: { duration: 1000 }
+                      duration: 1500,
+                      onLoad: { duration: 1500 }
                     }}
-                    style={{ data: { stroke: "#8884d8" } }}
+                    style={{ data: { stroke: "#4f81bd", strokeWidth: 2 } }}
                     labels={({ datum }) => `Open: ${datum.open}`}
-                    labelComponent={<VictoryTooltip />}
+                    labelComponent={<VictoryTooltip style={{ fontSize: 10 }} />}
                   />
                   <VictoryLine
                     data={getChartData(sprint.ticketsData)}
                     x="date"
                     y="closed"
+                    interpolation="monotoneX"
                     animate={{
-                      duration: 1000,
-                      onLoad: { duration: 1000 }
+                      duration: 1500,
+                      onLoad: { duration: 1500 }
                     }}
-                    style={{ data: { stroke: "#82ca9d" } }}
+                    style={{ data: { stroke: "#c0504d", strokeWidth: 2 } }}
                     labels={({ datum }) => `Closed: ${datum.closed}`}
-                    labelComponent={<VictoryTooltip />}
+                    labelComponent={<VictoryTooltip style={{ fontSize: 10 }} />}
                   />
                 </VictoryChart>
-
-                {/* Team stats section */}
-                <div className="team-stats">
-                  <h4>Team Ticket Stats</h4>
-                  {Object.keys(sprint.memberStats).map(member => (
-                    <div key={member} className="team-stat-item">
-                      <p><strong>{member}</strong></p>
-                      <p>Received: {sprint.memberStats[member].received}</p>
-                      <p>Closed: {sprint.memberStats[member].closed}</p>
-                    </div>
-                  ))}
-                </div>
               </div>
             )}
           </div>

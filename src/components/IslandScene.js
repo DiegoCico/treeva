@@ -1,9 +1,10 @@
-// import React, { Suspense, useEffect } from "react";
+// import React, { Suspense, useEffect, useState } from "react";
 // import { Canvas, useLoader } from "@react-three/fiber";
 // import { OrbitControls } from '@react-three/drei';
 // import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 // import * as THREE from 'three';
 
+// // Function to generate random colors
 // function getRandomColor() {
 //     const letters = '0123456789ABCDEF';
 //     let color = '#';
@@ -13,59 +14,48 @@
 //     return color;
 // }
 
-// function StageTree({ stage, pos }) {
-//     let y;
-//     const gltf = useLoader(GLTFLoader, `/stage${stage}.gltf`); // Replace with the actual path to stage1.glb
+// function StageTree({ stage, x, z, setHoveredTree }) {
+//     const gltf = useLoader(GLTFLoader, `/stage${stage}.gltf`); // Replace with the actual path to your model
 //     const treeMaterial = new THREE.MeshStandardMaterial({
 //         color: '#228B22',
 //         roughness: 0.6,
 //         metalness: 0.1
 //     });
 
-//     // Set position based on the stage
-//     if (stage === 1) {
-//         pos = [0, 1, 0];
-//         y = 1
-//     } else if (stage === 2) {
-//         pos = [0, 1.5, 0];
-//         y = 1.5
-//     } else if (stage === 3) {
-//         pos = [0, 1.8, 0];
-//         y = 1.8
-//     } else if (stage === 4) {
-//         y = 2
-//         pos = [0, 2, 0];
-//     }
+//     const y = 0.2
 
-//     // Center the model by calculating the bounding box and adjusting the position
+//     // Traverse the model and apply the material
 //     gltf.scene.traverse((child) => {
 //         if (child.isMesh) {
-//             child.geometry.computeBoundingBox();
-//             const boundingBox = child.geometry.boundingBox;
-//             const center = new THREE.Vector3();
-//             boundingBox.getCenter(center);
-//             child.geometry.translate(-center.x, -center.y, -center.z); // Move the model so its center is at the origin
-
 //             child.material = treeMaterial;
 //             child.material.needsUpdate = true;
 //         }
 //     });
 
 //     return (
-//         <>
+//         <group
+//             position={[x, y, z]}
+//             onPointerOver={() => setHoveredTree(`Tree at position [${x}, ${z}]`)}
+//             onPointerOut={() => setHoveredTree(null)}
+//         >
 //             {/* Render the tree model */}
-//             <primitive object={gltf.scene} position={[pos[0], y, pos[1]]} scale={1} />
+//             <primitive object={gltf.scene.clone()} position={[x, y, z]} scale={1} />
             
-//             {/* Render the small red hexagon */}
-//             <mesh rotation={[0, 0, 0]} position={[0, 0.35, 0]}>
+//             {/* Render the small hexagon with random color */}
+//             <mesh rotation={[0, 0, 0]} position={[x, 0.35, z]}>
 //                 <cylinderGeometry args={[1, 1, 0.1, 6]} />
 //                 <meshStandardMaterial color={getRandomColor()} />
 //             </mesh>
-//         </>
+//         </group>
 //     );
 // }
 
-// export default function IslandScene({ stage }) {
+// export default function IslandScene( { sprintsData } ) {
+//     const [hoveredTree, setHoveredTree] = useState(null);
+
+//     for (let i=0; i<sprintsData.length; i++) {
+//         console.log(sprintsData[i].sprintProgress)
+//     }
 //     useEffect(() => {
 //         const canvasElement = document.querySelector('canvas');
 
@@ -87,56 +77,88 @@
 //         };
 //     }, []);
 
+//     // Define positions for up to 5 trees, evenly spread out on the plot
 //     const treePositions = [
-//         [-2, -2],
-//         [2, -2],
-//         [-2, 2],
-//         [2, 2],
+//         [-2.8, -2],
+//         [2.8, -2],
+//         [-2.8, 2],
+//         [2.2, 2.2],
 //         [0, 0]
 //     ];
 
+//     const getSprintStage =(sprint) => {
+//         let stage
+//         if (sprint.sprintProgress <= 25) {
+//             stage = 1
+//         } else if (sprint.sprintProgress > 25 && sprint.sprintProgress <= 50) {
+//             stage = 2
+//         } else if (sprint.sprintProgress > 50 && sprint.sprintProgress <= 75) {
+//             stage = 3
+//         } else {
+//             stage = 4
+//         }
+
+//         return stage
+//     }
+
 //     return (
-//         <Suspense fallback={<div>Loading...</div>}>
-//             <Canvas
-//                 camera={{ position: [5, 5, 10], fov: 45 }}
-//                 style={{ width: '100%', height: 'calc(100vh - 150px)' }}
-//                 gl={{ preserveDrawingBuffer: true }}
-//                 dpr={Math.min(window.devicePixelRatio, 2)}
-//             >
-//                 <ambientLight intensity={0.6} />
-//                 <directionalLight position={[10, 10, 5]} intensity={1} />
+//         <>
+//             <Suspense fallback={<div>Loading...</div>}>
+//                 <Canvas
+//                     camera={{ position: [5, 5, 10], fov: 45 }}
+//                     style={{ width: '100%', height: 'calc(100vh - 150px)' }}
+//                     gl={{ preserveDrawingBuffer: true }}
+//                     dpr={Math.min(window.devicePixelRatio, 2)}
+//                 >
+//                     <ambientLight intensity={0.6} />
+//                     <directionalLight position={[10, 10, 5]} intensity={1} />
 
-//                 <group>
-//                     {/* Brown base */}
-//                     <mesh rotation={[0, 0, 0]} position={[0, 0, 0]}>
-//                         <cylinderGeometry args={[5, 5, 0.5, 6]} />
-//                         <meshStandardMaterial color="#8B4513" />
-//                     </mesh>
-//                     {/* Grass layer */}
-//                     <mesh rotation={[0, 0, 0]} position={[0, 0.30, 0]}>
-//                         <cylinderGeometry args={[5, 5, 0.1, 6]} />
-//                         <meshStandardMaterial color="#27AE60" />
-//                     </mesh>
-//                 </group>
-                
-//                 {treePositions.map((pos, index) => (
-//                     <StageTree key={index} stage={4} pos={pos} />
-//                 ))}
+//                     <group>
+//                         {/* Brown base */}
+//                         <mesh rotation={[0, 0, 0]} position={[0, 0, 0]}>
+//                             <cylinderGeometry args={[5, 5, 0.5, 6]} />
+//                             <meshStandardMaterial color="#8B4513" />
+//                         </mesh>
+//                         {/* Grass layer */}
+//                         <mesh rotation={[0, 0, 0]} position={[0, 0.30, 0]}>
+//                             <cylinderGeometry args={[5, 5, 0.1, 6]} />
+//                             <meshStandardMaterial color="#27AE60" />
+//                         </mesh>
+//                     </group>
 
-//                 <OrbitControls enablePan={false} enableZoom={false} />
-//             </Canvas>
-//         </Suspense>
+//                     {Array.from({ length: sprintsData.length }).map((_, index) => (
+//                         <StageTree key={index} stage={getSprintStage(sprintsData[index])} x={treePositions[index % treePositions.length][0]} z={treePositions[index % treePositions.length][1]} setHoveredTree={setHoveredTree} />
+//                     ))}
+
+//                     <OrbitControls enablePan={false} enableZoom={false} />
+//                 </Canvas>
+//             </Suspense>
+//             {hoveredTree && (
+//                 <div
+//                     style={{
+//                         position: 'absolute',
+//                         top: 10,
+//                         left: 10,
+//                         padding: '10px',
+//                         background: 'rgba(0, 0, 0, 0.7)',
+//                         color: 'white',
+//                         borderRadius: '5px'
+//                     }}
+//                 >
+//                     {hoveredTree}
+//                 </div>
+//             )}
+//         </>
 //     );
 // }
 
 
-import React, { Suspense, useEffect } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { Canvas, useLoader } from "@react-three/fiber";
 import { OrbitControls } from '@react-three/drei';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import * as THREE from 'three';
 
-// Function to generate random colors
 function getRandomColor() {
     const letters = '0123456789ABCDEF';
     let color = '#';
@@ -146,7 +168,7 @@ function getRandomColor() {
     return color;
 }
 
-function StageTree({ stage, x, z }) {
+function StageTree({ stage, x, z, setHoveredTree }) {
     const gltf = useLoader(GLTFLoader, `/stage${stage}.gltf`); // Replace with the actual path to your model
     const treeMaterial = new THREE.MeshStandardMaterial({
         color: '#228B22',
@@ -154,7 +176,7 @@ function StageTree({ stage, x, z }) {
         metalness: 0.1
     });
 
-    const y = 0.2
+    const y = 0.2;
 
     // Traverse the model and apply the material
     gltf.scene.traverse((child) => {
@@ -165,23 +187,26 @@ function StageTree({ stage, x, z }) {
     });
 
     return (
-        <>
+        <group
+            position={[x, y, z]}
+            onPointerOver={() => setHoveredTree(`Tree at position [${x}, ${z}]`)}
+            onPointerOut={() => setHoveredTree(null)}
+        >
             {/* Render the tree model */}
-            <primitive object={gltf.scene.clone()} position={[x, y, z]} scale={1} />
-            
+            <primitive object={gltf.scene.clone()} scale={1} />
+
             {/* Render the small hexagon with random color */}
-            <mesh rotation={[0, 0, 0]} position={[x, 0.35, z]}>
+            <mesh rotation={[0, 0, 0]} position={[0, 0.15, 0]}>
                 <cylinderGeometry args={[1, 1, 0.1, 6]} />
                 <meshStandardMaterial color={getRandomColor()} />
             </mesh>
-        </>
+        </group>
     );
 }
 
-export default function IslandScene( { sprintsData } ) {
-    for (let i=0; i<sprintsData.length; i++) {
-        console.log(sprintsData[i].sprintProgress)
-    }
+export default function IslandScene({ sprintsData }) {
+    const [hoveredTree, setHoveredTree] = useState(null);
+
     useEffect(() => {
         const canvasElement = document.querySelector('canvas');
 
@@ -212,52 +237,77 @@ export default function IslandScene( { sprintsData } ) {
         [0, 0]
     ];
 
-    const getSprintStage =(sprint) => {
-        let stage
+    const getSprintStage = (sprint) => {
+        let stage;
         if (sprint.sprintProgress <= 25) {
-            stage = 1
+            stage = 1;
         } else if (sprint.sprintProgress > 25 && sprint.sprintProgress <= 50) {
-            stage = 2
+            stage = 2;
         } else if (sprint.sprintProgress > 50 && sprint.sprintProgress <= 75) {
-            stage = 3
+            stage = 3;
         } else {
-            stage = 4
+            stage = 4;
         }
 
-        return stage
-    }
+        return stage;
+    };
 
     return (
-        <Suspense fallback={<div>Loading...</div>}>
-            <Canvas
-                camera={{ position: [5, 5, 10], fov: 45 }}
-                style={{ width: '100%', height: 'calc(100vh - 150px)' }}
-                gl={{ preserveDrawingBuffer: true }}
-                dpr={Math.min(window.devicePixelRatio, 2)}
-            >
-                <ambientLight intensity={0.6} />
-                <directionalLight position={[10, 10, 5]} intensity={1} />
+        <>
+            <Suspense fallback={<div>Loading...</div>}>
+                <Canvas
+                    camera={{ position: [5, 5, 10], fov: 45 }}
+                    style={{ width: '100%', height: 'calc(100vh - 150px)' }}
+                    gl={{ preserveDrawingBuffer: true }}
+                    dpr={Math.min(window.devicePixelRatio, 2)}
+                >
+                    <ambientLight intensity={0.6} />
+                    <directionalLight position={[10, 10, 5]} intensity={1} />
 
-                <group>
-                    {/* Brown base */}
-                    <mesh rotation={[0, 0, 0]} position={[0, 0, 0]}>
-                        <cylinderGeometry args={[5, 5, 0.5, 6]} />
-                        <meshStandardMaterial color="#8B4513" />
-                    </mesh>
-                    {/* Grass layer */}
-                    <mesh rotation={[0, 0, 0]} position={[0, 0.30, 0]}>
-                        <cylinderGeometry args={[5, 5, 0.1, 6]} />
-                        <meshStandardMaterial color="#27AE60" />
-                    </mesh>
-                </group>
+                    <group>
+                        {/* Brown base */}
+                        <mesh rotation={[0, 0, 0]} position={[0, 0, 0]}>
+                            <cylinderGeometry args={[5, 5, 0.5, 6]} />
+                            <meshStandardMaterial color="#8B4513" />
+                        </mesh>
+                        {/* Grass layer */}
+                        <mesh rotation={[0, 0, 0]} position={[0, 0.30, 0]}>
+                            <cylinderGeometry args={[5, 5, 0.1, 6]} />
+                            <meshStandardMaterial color="#27AE60" />
+                        </mesh>
+                    </group>
 
-                {Array.from({ length: sprintsData.length }).map((_, index) => (
-                    <StageTree key={index} stage={getSprintStage(sprintsData[index])} x={treePositions[index % treePositions.length][0]} z={treePositions[index % treePositions.length][1]} />
-                ))}
-                
+                    {Array.from({ length: sprintsData.length }).map((_, index) => (
+                        <StageTree
+                            key={index}
+                            stage={getSprintStage(sprintsData[index])}
+                            x={treePositions[index % treePositions.length][0]}
+                            z={treePositions[index % treePositions.length][1]}
+                            setHoveredTree={setHoveredTree}
+                        />
+                    ))}
 
-                <OrbitControls enablePan={false} enableZoom={false} />
-            </Canvas>
-        </Suspense>
+                    <OrbitControls enablePan={false} enableZoom={false} />
+                </Canvas>
+            </Suspense>
+
+            {/* Tooltip */}
+            {hoveredTree && (
+                <div
+                    style={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        padding: '10px',
+                        background: 'rgba(0, 0, 0, 0.7)',
+                        color: 'white',
+                        borderRadius: '5px'
+                    }}
+                >
+                    {hoveredTree}
+                </div>
+            )}
+        </>
     );
 }
