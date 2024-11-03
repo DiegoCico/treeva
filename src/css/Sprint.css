@@ -1,8 +1,49 @@
+/* Define color variables for light and dark modes */
+body.light-mode {
+  --background-color: #f0f4f8;
+  --text-color: #333;
+  --header-color: #2e7d32;
+  --button-background: #1b5e20;
+  --button-hover-background: white;
+  --button-text: white;
+  --button-hover-text: #1b5e20;
+  --disabled-button-background: #a5d6a7;
+  --modal-background: white;
+  --modal-border: #2e7d32;
+  --modal-text: #1b5e20;
+  --error-color: #d32f2f;
+  --table-header-background: #f3f3f3;
+  --table-text: #333;
+  --analytics-item-background: #f9f9f9;
+  --analytics-item-hover-background: #f0f0f0;
+}
+
+body.dark-mode {
+  --background-color: #333;
+  --text-color: #f5f5f5;
+  --header-color: #a5d6a7;
+  --button-background: #2e7d32;
+  --button-hover-background: #1b5e20;
+  --button-text: white;
+  --button-hover-text: #f5f5f5;
+  --disabled-button-background: #4c4c4c;
+  --modal-background: #444;
+  --modal-border: #a5d6a7;
+  --modal-text: #f5f5f5;
+  --error-color: #ff6b6b;
+  --table-header-background: #555;
+  --table-text: #f5f5f5;
+  --analytics-item-background: #555;
+  --analytics-item-hover-background: #666;
+}
+
 /* Overall page styling */
 .sprint-page {
   padding: 2rem;
-  background-color: #f0f4f8;
+  background-color: var(--background-color);
+  color: var(--text-color);
   font-family: 'Roboto', sans-serif;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 /* Header styling */
@@ -14,17 +55,17 @@
 }
 
 .sprint-header h1 {
-  color: #2e7d32; /* Dark green */
+  color: var(--header-color);
   font-size: 2rem;
 }
 
 /* Unified button styles for End Sprint and Analytics */
-.end-sprint-btn, .analytics-btn {
+.end-sprint-btn, .analytics-btn, .toggle-theme-btn {
   padding: 0.6rem 1.5rem;
-  background-color: #1b5e20; /* Dark green */
-  color: white;
+  background-color: var(--button-background);
+  color: var(--button-text);
   font-weight: bold;
-  border: 2px solid #1b5e20;
+  border: 2px solid var(--button-background);
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
@@ -33,24 +74,24 @@
 }
 
 /* Hover effect for both buttons */
-.end-sprint-btn:hover, .analytics-btn:hover {
-  background-color: white;
-  color: #1b5e20; /* Green text on hover */
+.end-sprint-btn:hover, .analytics-btn:hover, .toggle-theme-btn:hover {
+  background-color: var(--button-hover-background);
+  color: var(--button-hover-text);
   box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15); /* Darker shadow on hover */
 }
 
 /* Active effect for both buttons */
 .end-sprint-btn:active, .analytics-btn:active {
   background-color: #1a5318; /* Slightly darker green when clicked */
-  color: white;
+  color: var(--button-text);
 }
 
 /* Disabled state styling for End Sprint button */
 .end-sprint-btn:disabled {
-  background-color: #a5d6a7; /* Light green for disabled state */
+  background-color: var(--disabled-button-background);
   color: #ffffff;
   cursor: not-allowed;
-  border: 2px solid #a5d6a7;
+  border: 2px solid var(--disabled-button-background);
   box-shadow: none;
 }
 
@@ -60,9 +101,9 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: white;
+  background-color: var(--modal-background);
   padding: 2rem;
-  border: 1px solid #2e7d32;
+  border: 1px solid var(--modal-border);
   border-radius: 8px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
   text-align: center;
@@ -71,7 +112,7 @@
 }
 
 .modal h2 {
-  color: #1b5e20;
+  color: var(--modal-text);
   margin-bottom: 1rem;
 }
 
@@ -82,12 +123,14 @@
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 1rem;
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
 
 .modal button {
   padding: 0.6rem 1.5rem;
-  background-color: #2e7d32;
-  color: white;
+  background-color: var(--button-background);
+  color: var(--button-text);
   font-weight: bold;
   border: none;
   border-radius: 5px;
@@ -96,12 +139,12 @@
 }
 
 .modal button:hover {
-  background-color: #1b5e20;
+  background-color: var(--button-hover-background);
 }
 
 /* Additional styling for error message in modal */
 .error-message {
-  color: #d32f2f;
+  color: var(--error-color);
   font-size: 0.9rem;
   margin-top: 0.5rem;
 }
@@ -124,12 +167,13 @@
 }
 
 .team-stats th {
-  background-color: #f3f3f3;
+  background-color: var(--table-header-background);
   font-weight: bold;
+  color: var(--text-color);
 }
 
 .team-stats td {
-  color: #333;
+  color: var(--table-text);
 }
 
 /* Analytics item styling */
@@ -139,7 +183,7 @@
   padding: 15px;
   border: 1px solid #ddd;
   border-radius: 8px;
-  background-color: #f9f9f9;
+  background-color: var(--analytics-item-background);
   cursor: pointer;
   transition: all 0.3s ease;
   overflow: hidden;
@@ -152,12 +196,12 @@
 }
 
 .analytics-item:hover {
-  background-color: #f0f0f0;
+  background-color: var(--analytics-item-hover-background);
 }
 
 .analytics-item-left {
   font-weight: bold;
-  color: #1b5e20;
+  color: var(--header-color);
 }
 
 .analytics-item-right p {

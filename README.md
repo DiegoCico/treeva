@@ -1,70 +1,71 @@
-# Getting Started with Create React App
+# Treeva
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This repository is a task management and visualization app designed to enhance productivity and team collaboration with a unique 3D tree representation of sprint progress. With features like dark and light modes, Firebase integration, detailed user profiles, team analytics, and task management, this app provides an engaging and intuitive way to manage projects.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- **3D Tree Visualization**: Sprint tasks are visualized as trees on an island, providing a fun and interactive way to track progress. Each tree stage reflects the percentage of completed tasks, giving a visual snapshot of sprint health.
+- **Interactive Dark/Light Modes**: Customize the appearance of the app with a toggle between dark and light modes, ensuring a comfortable user experience.
+- **User Profile and Progress Tracking**: Displays user information, team members, and an animated progress circle based on closed tickets, helping users track their individual contributions.
+- **Team Collaboration and Analytics**: Track progress per sprint with a breakdown of tickets assigned to each team member. Detailed statistics and charts help teams understand performance over time.
+- **Firebase Integration**: Real-time data storage and retrieval using Firebase Firestore for managing users, tasks, and sprints. All data is securely stored and accessible across devices.
+- **Responsive and Mobile-Friendly Design**: Adaptable for both desktop and mobile environments, ensuring that team members can stay updated on the go.
+- **Task Management with Ticket System**: Add, edit, and delete tasks within sprints. Each task includes tickets that can be assigned, reassigned, and marked as completed.
+- **Dynamic Task Categories and Difficulties**: Supports categorizing tasks and assigning difficulty levels, allowing teams to prioritize work effectively.
+- **Intuitive User Interface**: Includes animated elements, smooth transitions, and tooltips for an improved user experience, making project management both functional and visually appealing.
 
-### `npm start`
+## Project Structure
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **`Homepage`**: The main entry point, rendering the side navigation, user profile, and 3D visualizations.
+- **`IslandScene`**: Renders the 3D scene with trees using @react-three/fiber, representing each sprint’s progress as stages of a tree. By selecting the tree you can view analytics of the sprint.
+- **`Task Management`**: Add, edit, and delete tasks within sprints. Each task column is styled to be responsive and intuitive, providing quick access to task details.
+- **`Analytics`**: Visualizes sprint progress with charts, tracking open and closed tickets over time. This helps teams quickly identify trends and areas for improvement.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Getting Started
 
-### `npm test`
+1. **Tree Visualization**: Click on a tree to focus on its progress in the sprint. Hover over trees to see sprint names, representing the tasks completed in that sprint.
+2. **Add New Task**: Click the "Add Task" button in each sprint column to quickly create and assign new tasks.
+3. **Switch Themes**: Toggle between light and dark modes using the button in the sidebar to suit your preference.
+4. **Track Analytics**: View detailed ticket stats for each sprint, including team member progress, tickets closed, and completion percentage.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Code Overview
 
-### `npm run build`
+### Key Components
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. **`Homepage`**:
+   - Manages active views, allowing users to switch between the User Profile, Sprints, and 3D Visualization.
+   - Retrieves and displays user and workspace data from Firebase Firestore.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+2. **`IslandScene`**:
+   - Renders the 3D tree visualization for sprints, with animations and camera movement based on user interactions.
+   - Each tree stage is represented by a unique GLTF model, allowing for visually distinct stages of progress.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+3. **`Analytics`**:
+   - Uses Victory charts to render ticket stats, providing insights into sprint progress and individual contributions.
+   - Displays member stats with ticket assignments and closures, giving teams a clear view of each member's productivity.
 
-### `npm run eject`
+4. **`UserProfile`**:
+   - Shows detailed user information, lists team members, and displays a progress circle with color-coded indicators for completion percentage.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Styles and Themes
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+The CSS files include styles for both dark and light modes, integrated into the `Homepage` component. Color variables are defined to keep a consistent look across the app, ensuring a seamless experience when switching themes.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Firebase Structure
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- **Users**: Stores user profile information, including personal details and contact information.
+- **Workspaces**: Contains workspace-level data, including sprints, tasks, and team members.
+- **Sprints**: Holds task data, each containing a series of tickets for more granular tracking.
 
-## Learn More
+### Customization
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- **3D Models**: Replace tree models in the `public/` directory to change the appearance of each sprint stage.
+- **Styling**: Modify CSS variables in `Task.css` to customize colors, layouts, and animations.
+- **Firebase Data Structure**: Extend the current Firebase structure to include additional fields, such as task comments, attachments, or custom statuses.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Dependencies
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- **React**: Frontend framework for building a responsive, interactive UI.
+- **@react-three/fiber**: Integrates Three.js with React for the 3D tree visualizations.
+- **Firebase Firestore**: Real-time database for storing and managing project data, allowing teams to collaborate and update tasks in real time.
+- **Victory**: Charting library for rendering analytics, making it easy to track sprint progress and visualize team statistics.

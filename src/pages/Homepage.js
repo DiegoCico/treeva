@@ -14,19 +14,18 @@ export default function Homepage() {
     const [activeButton, setActiveButton] = useState('user');
     const [userData, setUserData] = useState({});
     const [workspace, setWorkspace] = useState({});
-    const [sprintStage, setSprintStage] = useState(0)
-    const [currentSprints, setCurrentSprints] = useState({})
+    const [sprintStage, setSprintStage] = useState(0);
+    const [currentSprints, setCurrentSprints] = useState({});
+    const [isDarkMode, setIsDarkMode] = useState(false); // Dark mode state
+
+    const toggleDarkMode = () => setIsDarkMode(!isDarkMode); // Toggle dark mode
 
     const getUserData = async (userId) => {
         try {
             const userDocRef = doc(db, "users", userId);
             const userDoc = await getDoc(userDocRef);
-
-            if (userDoc.exists()) {
-                setUserData(userDoc.data());
-            } else {
-                console.log('No user found');
-            }
+            if (userDoc.exists()) setUserData(userDoc.data());
+            else console.log('No user found');
         } catch (error) {
             console.log(error);
         }
@@ -34,46 +33,33 @@ export default function Homepage() {
 
     const getWorkspaceData = async (workspaceCode) => {
         try {
-            // Reference the workspace document
             const workspaceDocRef = doc(db, "workspace", workspaceCode);
             const workspaceDoc = await getDoc(workspaceDocRef);
-
             if (workspaceDoc.exists()) {
                 setWorkspace(workspaceDoc.data());
-
-                // Access the sprints subcollection within the workspace document
                 const sprintsCollectionRef = collection(workspaceDocRef, "sprints");
                 const sprintsSnapshot = await getDocs(sprintsCollectionRef);
-
-                // Fetch all sprints and their tasks
                 const sprints = await Promise.all(
                     sprintsSnapshot.docs.map(async (sprintDoc) => {
-                        // Reference to the tasks subcollection within each sprint
                         const tasksCollectionRef = collection(sprintDoc.ref, "tasks");
                         const tasksSnapshot = await getDocs(tasksCollectionRef);
-                        
-                        // Get tasks data as an array of task dictionaries
                         const tasks = tasksSnapshot.docs.map((taskDoc) => ({
                             id: taskDoc.id,
                             ...taskDoc.data()
                         }));
                         const totalTicketsCount = tasks.reduce((sum, task) => sum + task.tickets.length, 0);
-
                         const closeTask = tasks.find(task => task.id === 'Close');
                         const closedTicketsCount = closeTask ? closeTask.tickets.length : 0;
-                        // Return sprint data along with its tasks
                         return {
                             id: sprintDoc.id,
                             ...sprintDoc.data(),
                             tasks: tasks,
                             totalTickets: totalTicketsCount,
                             ticketsDone: closedTicketsCount,
-                            sprintProgress: totalTicketsCount && closedTicketsCount ? Math.round((closedTicketsCount/totalTicketsCount)*1000) / 10 : 0
+                            sprintProgress: totalTicketsCount && closedTicketsCount ? Math.round((closedTicketsCount / totalTicketsCount) * 1000) / 10 : 0
                         };
                     })
                 );
-
-                // Set state with sprints including their tasks
                 setCurrentSprints(sprints);
             } else {
                 console.log('No workspace found');
@@ -83,45 +69,21 @@ export default function Homepage() {
         }
     };
 
-    // this to make the page refresh when trees button clicked again
-    // useEffect(() => {
-    //     const savedActiveButton = localStorage.getItem('activeButton');
-    //     if (savedActiveButton) {
-    //         setActiveButton(savedActiveButton);
-    //     }
-    // }, []);
-
     useEffect(() => {
-        if (userId) {
-            getUserData(userId);
-        }
+        if (userId) getUserData(userId);
     }, [userId]);
 
     useEffect(() => {
-        if (workspaceCode) {
-            getWorkspaceData(workspaceCode);
-        }
+        if (workspaceCode) getWorkspaceData(workspaceCode);
     }, [workspaceCode]);
 
-    useEffect(() => {
-        if (userData) {
-            console.log(userData);
-        }
-    }, [userData]);
-
-
-    useEffect(() => {
-        if (userData) {
-            console.log('----START----')
-            console.log(currentSprints);
-            console.log('----END----')
-        }
-    }, [currentSprints]);
-
     return (
-        <div className="homepage">
+        <div className={`homepage ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
             <div className="sidenav">
                 <SideNav activeButton={activeButton} setActiveButton={setActiveButton} />
+                <button onClick={toggleDarkMode} className="toggle-mode-button">
+                    {isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                </button>
             </div>
             <div className="body">
                 {activeButton === 'user' && (

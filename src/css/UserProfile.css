@@ -1,24 +1,59 @@
-/* UserProfile.css */
+/* General color variables for light and dark modes */
+body.light-mode {
+    --background-color: #F7F7F7;
+    --text-color: #333;
+    --header-background: #27AE60;
+    --header-text-color: white;
+    --section-background: #FFFFFF;
+    --section-border: #C1C1C1;
+    --team-cell-background: #f9f9f9;
+    --team-cell-border: #ddd;
+    --progress-low: #FF4C4C;
+    --progress-medium: #FFD700;
+    --progress-high: #27AE60;
+    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
+}
+
+body.dark-mode {
+    --background-color: #333;
+    --text-color: #F5F5F5;
+    --header-background: #1D8650;
+    --header-text-color: #E0E0E0;
+    --section-background: #444;
+    --section-border: #888;
+    --team-cell-background: #555;
+    --team-cell-border: #666;
+    --progress-low: #FF6B6B;
+    --progress-medium: #FFC400;
+    --progress-high: #34C759;
+    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Darker shadow for dark mode */
+}
+
+/* Apply general styling based on theme */
 .userprofile-cont {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100%;
+    background-color: var(--background-color);
+    color: var(--text-color);
 }
 
+/* Profile box styling with enhanced shadow */
 .profile-box {
-    background-color: #F7F7F7;
+    background-color: var(--section-background);
     border-radius: 12px;
     width: 100%;
     max-width: 850px;
     min-height: 625px;
     padding: 0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--box-shadow); /* Enhanced shadow */
 }
 
+/* Profile header styling */
 .profile-header {
-    background-color: #27AE60;
-    color: white;
+    background-color: var(--header-background);
+    color: var(--header-text-color);
     padding: 10px 20px;
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
@@ -31,6 +66,7 @@
     font-size: 1.5rem;
 }
 
+/* User info section styling */
 .user-info {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -40,8 +76,8 @@
 }
 
 .section {
-    background-color: #FFFFFF;
-    border: 1px solid #C1C1C1;
+    background-color: var(--section-background);
+    border: 1px solid var(--section-border);
     border-radius: 8px;
     padding: 15px;
 }
@@ -65,19 +101,20 @@
 
 .section1 p strong {
     font-weight: lighter;
-    color: #808080;
+    color: var(--text-color);
 }
 
 .section1 p {
     margin: 0 0 10px;
     font-size: 0.9rem;
-    color: #808080;
+    color: var(--text-color);
     font-weight: bold;
 }
 
 .section h2 {
     margin-top: 0;
     font-size: 1.1rem;
+    color: var(--text-color);
 }
 
 .section3 h2 {
@@ -85,7 +122,6 @@
 }
 
 .section3 {
-    color: #808080;
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -95,10 +131,13 @@
     width: 100%;
     height: 60%;
     border-radius: 5px;
-    border: 1px solid #C1C1C1;
+    border: 1px solid var(--section-border);
     resize: none;
+    background-color: var(--section-background);
+    color: var(--text-color);
 }
 
+/* Progress circle styling with dynamic color based on progress */
 .progress-circle {
     display: flex;
     align-items: center;
@@ -112,13 +151,16 @@
     position: relative;
     border-width: 8px;
     border-style: solid;
+    border-color: var(--progress-color);
+    color: var(--progress-color);
 }
 
 .progress-circle span {
     position: absolute;
-    color: inherit; /* matches dynamic color */
+    color: inherit;
 }
 
+/* Responsive styling */
 @media (max-width: 900px) {
     .profile-box {
         padding: 15px;
@@ -139,6 +181,7 @@
     }
 }
 
+/* Team grid styling */
 .team-grid {
     display: flex;
     flex-direction: column;
@@ -154,8 +197,9 @@
 .team-cell {
     flex: 1;
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--team-cell-border);
     text-align: center;
-    background-color: #f9f9f9;
+    background-color: var(--team-cell-background);
     border-radius: 4px;
+    color: var(--text-color);
 }

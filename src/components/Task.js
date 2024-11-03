@@ -16,6 +16,8 @@ const ItemTypes = {
 const REQUIRED_COLUMNS = ["To Do", "Close"];
 
 const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
+  const [isEditMode, setEditMode] = useState(false);
+  const [selectedTicketId, setSelectedTicketId] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState(null);

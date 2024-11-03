@@ -1,22 +1,58 @@
+/* Define color variables for light and dark modes */
+body.light-mode {
+    --background-color: #f4f6f8;
+    --text-color: #333;
+    --column-background: #ffffff;
+    --border-color: #c1c1c1;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --header-color: #28a745;
+    --button-background: #28a745;
+    --button-hover-background: #1e7e34;
+    --ticket-background: #eafaf1;
+    --modal-background: #ffffff;
+    --overlay-background: rgba(0, 0, 0, 0.5);
+    --user-option-hover: #f0f0f0;
+    --delete-zone-inactive: rgba(255, 0, 0, 0.3);
+    --delete-zone-active: rgba(255, 0, 0, 0.7);
+}
+
+body.dark-mode {
+    --background-color: #333;
+    --text-color: #f5f5f5;
+    --column-background: #444;
+    --border-color: #888;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --header-color: #a5d6a7;
+    --button-background: #2e7d32;
+    --button-hover-background: #1b5e20;
+    --ticket-background: #555;
+    --modal-background: #444;
+    --overlay-background: rgba(0, 0, 0, 0.7);
+    --user-option-hover: #555;
+    --delete-zone-inactive: rgba(255, 0, 0, 0.3);
+    --delete-zone-active: rgba(255, 0, 0, 0.8);
+}
+
 /* Main container for the task component */
 .task-container {
     padding: 20px;
-    background-color: #f4f6f8;
+    background-color: var(--background-color);
     overflow-x: auto;
     white-space: nowrap;
     font-family: Arial, sans-serif;
-  }
-  
-  /* Container for all task columns */
-  .tasks {
+    color: var(--text-color);
+}
+
+/* Container for all task columns */
+.tasks {
     display: flex;
     gap: 24px;
     padding: 10px 0;
     align-items: flex-start;
-  }
-  
-  /* Styling for the create new task column button */
-  .create-task-box {
+}
+
+/* Styling for the create new task column button */
+.create-task-box {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -24,53 +60,53 @@
     height: 200px;
     background-color: rgba(200, 200, 200, 0.3); /* Light gray tint */
     border: 2px dotted rgba(100, 100, 100, 0.5); /* Dotted border */
-    color: #333;
+    color: var(--text-color);
     font-weight: bold;
     text-align: center;
     cursor: pointer;
     border-radius: 8px;
     transition: background-color 0.3s ease;
-  }
-  
-  .create-task-box:hover {
+}
+
+.create-task-box:hover {
     background-color: rgba(200, 200, 200, 0.5); /* Darker tint on hover */
-  }
-  
-  /* Styling for each task column */
-  .task-column {
+}
+
+/* Styling for each task column */
+.task-column {
     min-width: 280px;
     max-width: 300px;
     min-height: 600px;
-    background-color: #ffffff;
-    border: 2px solid #C1C1C1; /* Border */
+    background-color: var(--column-background);
+    border: 2px solid var(--border-color);
     border-radius: 10px;
     padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px var(--shadow-color);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     overflow-y: auto;
-  }
-  
-  .task-column:hover {
+}
+
+.task-column:hover {
     transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-  }
-  
-  /* Header for each task column */
-  .task-column h3 {
+    box-shadow: 0 6px 12px var(--shadow-color);
+}
+
+/* Header for each task column */
+.task-column h3 {
     font-size: 18px;
     font-weight: 600;
-    color: #28a745;
+    color: var(--header-color);
     text-align: center;
     margin-bottom: 15px;
     text-transform: uppercase;
-  }
-  
-  /* Add Task Button */
-  .add-task-btn {
-    background-color: #28a745;
+}
+
+/* Add Task Button */
+.add-task-btn {
+    background-color: var(--button-background);
     color: #fff;
     border: none;
     padding: 8px 20px;
@@ -79,83 +115,83 @@
     font-weight: 600;
     margin: 10px 0;
     transition: background-color 0.3s, transform 0.2s ease;
-  }
-  
-  .add-task-btn:hover {
-    background-color: #1e7e34;
+}
+
+.add-task-btn:hover {
+    background-color: var(--button-hover-background);
     transform: translateY(-1px);
-  }
-  
-  /* Styling for each ticket within a task column */
-  .ticket {
-    padding: 10px; /* Reduced padding for compact layout */
-    background-color: #eafaf1;
-    border: 1px solid #28a745;
+}
+
+/* Styling for each ticket within a task column */
+.ticket {
+    padding: 10px;
+    background-color: var(--ticket-background);
+    border: 1px solid var(--header-color);
     border-radius: 8px;
     margin-top: 10px;
-    color: #333;
+    color: var(--text-color);
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
     transition: box-shadow 0.3s ease;
-    max-width: 100%; /* Ensure ticket fits within task column */
-    word-wrap: break-word; /* Handle overflow for long text */
-  }
-  
-  .ticket:hover {
+    max-width: 100%;
+    word-wrap: break-word;
+}
+
+.ticket:hover {
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .ticket h4 {
+}
+
+.ticket h4 {
     font-size: 16px;
     margin: 0 0 5px;
-    color: #28a745;
+    color: var(--header-color);
     font-weight: 500;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; /* Truncate long titles */
-  }
-  
-  .ticket p {
+    text-overflow: ellipsis;
+}
+
+.ticket p {
     font-size: 14px;
     margin: 0;
-    color: #333;
-    line-height: 1.4; /* Compact line spacing */
-    max-height: 40px; /* Limit height for compactness */
+    color: var(--text-color);
+    line-height: 1.4;
+    max-height: 40px;
     overflow: hidden;
-    text-overflow: ellipsis; /* Truncate overflow text */
-  }
-  
-  /* Scrollbar styling for horizontal scroll */
-  .task-container::-webkit-scrollbar {
+    text-overflow: ellipsis;
+}
+
+/* Scrollbar styling for horizontal scroll */
+.task-container::-webkit-scrollbar {
     height: 8px;
-  }
-  
-  .task-container::-webkit-scrollbar-thumb {
-    background-color: #C1C1C1;
+}
+
+.task-container::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
     border-radius: 4px;
-  }
-  
-  .task-container::-webkit-scrollbar-track {
-    background-color: #f1f1f1;
-  }
-  
-  /* Header section for the task component */
-  .task-container h2 {
+}
+
+.task-container::-webkit-scrollbar-track {
+    background-color: var(--background-color);
+}
+
+/* Header section for the task component */
+.task-container h2 {
     font-size: 24px;
-    color: #333;
+    color: var(--text-color);
     text-align: center;
     margin-bottom: 20px;
     font-weight: 700;
-  }
-  
-  /* Disabled state for buttons */
-  .button-disabled {
+}
+
+/* Disabled state for buttons */
+.button-disabled {
     background-color: #cccccc;
     color: #666666;
     cursor: not-allowed;
-  }
-  
-  /* Difficulty dropdown styling */
-  .difficulty-select {
+}
+
+/* Difficulty dropdown styling */
+.difficulty-select {
     font-weight: bold;
     padding: 10px;
     border-radius: 4px;
@@ -163,59 +199,58 @@
     margin-bottom: 15px;
     width: 100%;
     box-sizing: border-box;
-    appearance: none; /* Hide default dropdown arrow */
+    appearance: none;
     font-size: 16px;
-    color: #333; /* Default color for dropdown text */
-  }
-  
-  /* Additional styling for dropdown hover and focus */
-  .difficulty-select:hover,
-  .difficulty-select:focus {
+    color: var(--text-color);
+}
+
+.difficulty-select:hover,
+.difficulty-select:focus {
     outline: none;
-    border-color: #28a745;
+    border-color: var(--header-color);
     box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.2);
-  }
-  
-  /* Specific colors for options handled dynamically */
-  .difficulty-select option[value="Easy"] {
+}
+
+/* Specific colors for options handled dynamically */
+.difficulty-select option[value="Easy"] {
     color: green;
-  }
-  
-  .difficulty-select option[value="Medium"] {
-    color: #C1C1C1;
-  }
-  
-  .difficulty-select option[value="Hard"] {
+}
+
+.difficulty-select option[value="Medium"] {
+    color: #c1c1c1;
+}
+
+.difficulty-select option[value="Hard"] {
     color: black;
-  }
-  
-  /* Modal styling */
-  .modal-overlay {
+}
+
+/* Modal styling */
+.modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: var(--overlay-background);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
-  }
-  
-  .modal-content {
-    background-color: #ffffff;
+}
+
+.modal-content {
+    background-color: var(--modal-background);
     padding: 30px;
     border-radius: 8px;
-    width: 600px; /* Increased width */
-    max-width: 90vw; /* Ensures modal fits within viewport */
+    width: 600px;
+    max-width: 90vw;
     max-height: 80vh;
-    overflow-y: auto; /* Enable scrolling if the content overflows */
+    overflow-y: auto;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
     position: relative;
-  }
-  
-  .close-btn {
+}
+
+.close-btn {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -223,100 +258,104 @@
     border: none;
     font-size: 20px;
     cursor: pointer;
-  }
-  
-  .modal-content h2 {
+}
+
+.modal-content h2 {
     font-size: 24px;
     margin-bottom: 20px;
     text-align: center;
-    color: #28a745;
-  }
-  
-  .modal-content form {
+    color: var(--header-color);
+}
+
+.modal-content form {
     display: flex;
     flex-direction: column;
-    gap: 15px; /* Space between form fields */
-  }
-  
-  .modal-content form input,
-  .modal-content form textarea,
-  .modal-content form button {
+    gap: 15px;
+}
+
+.modal-content form input,
+.modal-content form textarea,
+.modal-content form button {
     width: 100%;
     padding: 10px;
     font-size: 16px;
     border-radius: 4px;
     border: 1px solid #cccccc;
     box-sizing: border-box;
-  }
-  
-  .modal-content form textarea {
+}
+
+.modal-content form textarea {
     resize: vertical;
     max-height: 150px;
-  }
-  
-  .modal-content form button {
-    background-color: #28a745;
+}
+
+.modal-content form button {
+    background-color: var(--button-background);
     color: #ffffff;
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s;
-  }
-  
-  .modal-content form button:hover {
-    background-color: #218838;
-  }
-  
-  /* Styling for user dropdown options */
-  .user-option {
+}
+
+.modal-content form button:hover {
+    background-color: var(--button-hover-background);
+}
+
+/* Styling for user dropdown options */
+.user-option {
     display: flex;
     align-items: center;
     padding: 5px;
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-  }
-  
-  .user-option:hover {
-    background-color: #f0f0f0;
-  }
-  
-  .user-initial-circle {
+}
+
+.user-option:hover {
+    background-color: var(--user-option-hover);
+}
+
+.user-initial-circle {
     display: inline-flex;
     justify-content: center;
     align-items: center;
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background-color: #28a745;
+    background-color: var(--header-color);
     color: #ffffff;
     font-weight: bold;
     font-size: 14px;
     margin-right: 8px;
-  }
-  
-  .user-name {
-    color: #333;
-  }
-  
-  /* Delete zone styling */
-  .delete-zone {
-    transition: opacity 0.3s ease, background-color 0.3s ease;
-    opacity: 0;
-    background-color: rgba(255, 0, 0, 0.3); /* Light red background */
-    text-align: center;
-    padding: 20px;
-    margin-top: 20px;
-    border-radius: 8px;
-    font-weight: bold;
+}
+
+.user-name {
+    color: var(--text-color);
+}
+
+/* Delete zone styling */
+/* Task.css */
+.delete-zone {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background-color: rgba(255, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: white;
+    font-weight: bold;
+    font-size: 18px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    opacity: 0;
   }
   
   .delete-zone.active {
     opacity: 1;
-    background-color: rgba(255, 0, 0, 0.7); /* Darker red background when active */
-  }
-  
-  .delete-zone p {
-    margin: 0;
+    background-color: rgba(255, 0, 0, 0.7);
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
   }
   

@@ -7,22 +7,44 @@ import TaskComponent from '../components/Task';
 import Analytics from './Analytics';
 
 const Sprint = () => {
-  const { userId, workspaceCode } = useParams(); 
+  const { userId, workspaceCode } = useParams();
   const [sprint, setSprint] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [newSprintName, setNewSprintName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
-  const [showAnalytics, setShowAnalytics] = useState(false); // New state for toggling Analytics view
+  const [showAnalytics, setShowAnalytics] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false); // Dark mode state
+
+  // Check for saved theme preference on component mount
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      setIsDarkMode(savedTheme === 'dark');
+      document.body.classList.toggle('dark-mode', savedTheme === 'dark');
+      document.body.classList.toggle('light-mode', savedTheme !== 'dark');
+    }
+  }, []);
+
+  // Toggle dark mode and save preference to localStorage
+  const toggleDarkMode = () => {
+    setIsDarkMode((prevMode) => {
+      const newMode = !prevMode;
+      localStorage.setItem('theme', newMode ? 'dark' : 'light');
+      document.body.classList.toggle('dark-mode', newMode);
+      document.body.classList.toggle('light-mode', !newMode);
+      return newMode;
+    });
+  };
 
   useEffect(() => {
     const fetchMostRecentSprint = async () => {
       try {
         const sprintRef = collection(db, `workspace/${workspaceCode}/sprints`);
         const sprintQuery = query(sprintRef, orderBy('createdAt', 'desc'), limit(1));
-        
+
         const sprintSnapshot = await getDocs(sprintQuery);
-        
+
         if (sprintSnapshot.empty) {
           setShowModal(true);
         } else {
@@ -100,26 +122,21 @@ const Sprint = () => {
   }
 
   return (
-    <div className="sprint-page">
-      {sprint ? (
-        <>
-          <div className="sprint-header">
-            <h1>{sprint.name}</h1>
-            <button className="end-sprint-btn" onClick={handleEndSprint} disabled={sprint.hasEnded}>
-              {sprint.hasEnded ? 'Sprint Ended' : 'End Sprint'}
-            </button>
-            <button className="analytics-btn" onClick={() => setShowAnalytics(!showAnalytics)}>
-              {showAnalytics ? 'Back to Tasks' : 'Analytics'}
-            </button>
-          </div>
-          {showAnalytics ? (
-            <Analytics workspaceCode={workspaceCode} sprintId={sprint.id} />
-          ) : (
-            <TaskComponent workspaceCode={workspaceCode} sprintId={sprint.id} />
-          )}
-        </>
+    <div className={`sprint-page ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+      <div className="sprint-header">
+        <h1>{sprint?.name || 'Sprint'}</h1>
+        <button className="end-sprint-btn" onClick={handleEndSprint} disabled={sprint?.hasEnded}>
+          {sprint?.hasEnded ? 'Sprint Ended' : 'End Sprint'}
+        </button>
+        <button className="analytics-btn" onClick={() => setShowAnalytics(!showAnalytics)}>
+          {showAnalytics ? 'Back to Tasks' : 'Analytics'}
+        </button>
+    
+      </div>
+      {showAnalytics ? (
+        <Analytics workspaceCode={workspaceCode} sprintId={sprint?.id} />
       ) : (
-        <p>No active sprint found.</p>
+        <TaskComponent workspaceCode={workspaceCode} sprintId={sprint?.id} />
       )}
     </div>
   );

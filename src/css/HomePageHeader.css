@@ -1,13 +1,13 @@
 /* Header container */
 .header-cont {
-    background-color: #27AE60; /* Header background color */
+    background-color: #27AE60;
     color: white;
     padding-left: 20px;
     padding-right: 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    grid-area: 1 / 1 / 2 / 7; /* Matches the header area in Homepage.css */
+    grid-area: 1 / 1 / 2 / 7;
     height: 100%;
     transition: background-color 0.3s, color 0.3s;
 }
@@ -22,7 +22,7 @@
 .actions {
     display: flex;
     align-items: center;
-    gap: 10px; /* Space between button and search bar */
+    gap: 10px;
 }
 
 /* Notification button styling */
@@ -30,12 +30,12 @@
     background-color: white;
     color: #27AE60;
     border: none;
-    padding: 8px;
+    padding: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 35px; /* Slightly smaller height for a balanced look */
-    width: 35px; /* Square button */
+    height: 45px;
+    width: 45px;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
@@ -46,7 +46,7 @@
 }
 
 .notification-btn i {
-    font-size: 18px;
+    font-size: 20px;
 }
 
 /* Search bar styling */
@@ -55,51 +55,122 @@
     color: #333;
     border: none;
     border-radius: 5px;
-    height: 35px; /* Matches notification button height */
-    width: 200px; /* Set width for search bar */
+    height: 35px;
+    width: 200px;
     padding: 0 10px;
 }
 
 .search-bar::placeholder {
-    color: #999; /* Placeholder text color */
+    color: #999;
 }
 
-/* Theme toggle button styling */
+/* Theme toggle button with larger size and animation */
 .theme-toggle-button {
-    padding: 8px 12px;
-    font-size: 1rem;
-    font-weight: bold;
+    padding: 10px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s, color 0.3s, transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+    width: 50px;
+    height: 50px;
+    background-color: transparent;
+    position: relative;
+    overflow: hidden;
 }
 
-/* Light mode button styling */
-.theme-toggle-button.light {
-    background-color: #f0f0f0;
-    color: #333;
+/* Animation for pulse effect */
+.theme-toggle-button.pulse {
+    animation: pulse 0.5s ease-in-out;
 }
 
-/* Dark mode button styling */
-.theme-toggle-button.dark {
-    background-color: #333;
-    color: #f0f0f0;
+/* Pulse animation */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
 }
 
-/* Pressed animation */
-.theme-toggle-button:active {
-    transform: scale(0.95); /* Button press animation */
+/* Sun and moon icon wrapper for rotation and fade */
+.icon-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+/* Rotate and fade effect */
+.icon-wrapper.sun-icon {
+    transform: rotate(0deg);
+    opacity: 1;
+}
+
+.icon-wrapper.moon-icon {
+    transform: rotate(180deg);
+    opacity: 0;
+}
+
+body.dark-mode .icon-wrapper.sun-icon {
+    transform: rotate(180deg);
+    opacity: 0;
+}
+
+body.dark-mode .icon-wrapper.moon-icon {
+    transform: rotate(0deg);
+    opacity: 1;
+}
+
+/* Sun icon styling: black icon on white background */
+.sun-icon {
+    color: black;
+    background-color: white;
+    border-radius: 8px;
+    padding: 8px;
+    width: 28px;
+    height: 28px;
+}
+
+/* Moon icon styling: white icon on black background */
+.moon-icon {
+    color: white;
+    background-color: black;
+    border-radius: 8px;
+    padding: 8px;
+    width: 28px;
+    height: 28px;
+}
+
+/* Hover scale animation for theme toggle button */
+.theme-toggle-button:hover {
+    transform: scale(1.1);
 }
 
 /* Dark mode styling for the entire page */
 body.dark-mode {
     --bg-color: #222;
     --text-color: #f0f0f0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
 }
 
 /* Light mode styling for the entire page */
 body.light-mode {
     --bg-color: #fff;
     --text-color: #222;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+/* Apply background and text colors dynamically */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
