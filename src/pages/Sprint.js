@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { db } from '../firebase';
-import { collection, doc, setDoc, getDocs, query, orderBy, limit, updateDoc } from 'firebase/firestore';
+import { collection, doc, setDoc, getDocs, query, orderBy, limit, updateDoc, writeBatch } from 'firebase/firestore';
 import '../css/Sprint.css';
 import TaskComponent from '../components/Task';
 import Analytics from './Analytics';
@@ -14,7 +14,8 @@ const Sprint = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [showAnalytics, setShowAnalytics] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false); // Dark mode state
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [tasks, setTasks] = useState([]); // State to hold tasks
 
   // Check for saved theme preference on component mount
   useEffect(() => {
@@ -94,6 +95,16 @@ const Sprint = () => {
     try {
       const sprintDoc = doc(db, `workspace/${workspaceCode}/sprints`, sprint.id);
       await updateDoc(sprintDoc, { hasEnded: true });
+
+      // Save each column in tasks to Firestore
+      const batch = writeBatch(db);
+      tasks.forEach((task) => {
+        const taskRef = doc(db, `workspace/${workspaceCode}/sprints/${sprint.id}/tasks`, task.id);
+        batch.set(taskRef, { ...task, hasEnded: true });
+      });
+
+      await batch.commit();
+
       setSprint((prev) => ({ ...prev, hasEnded: true }));
       setShowModal(true);
     } catch (error) {
@@ -131,12 +142,11 @@ const Sprint = () => {
         <button className="analytics-btn" onClick={() => setShowAnalytics(!showAnalytics)}>
           {showAnalytics ? 'Back to Tasks' : 'Analytics'}
         </button>
-    
       </div>
       {showAnalytics ? (
         <Analytics workspaceCode={workspaceCode} sprintId={sprint?.id} />
       ) : (
-        <TaskComponent workspaceCode={workspaceCode} sprintId={sprint?.id} />
+        <TaskComponent workspaceCode={workspaceCode} sprintId={sprint?.id} tasks={tasks} setTasks={setTasks} />
       )}
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../firebase.js';
+import { db } from '../firebase';
 import { collection, doc, getDoc, getDocs, setDoc, updateDoc, writeBatch } from 'firebase/firestore';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -15,10 +15,9 @@ const ItemTypes = {
 
 const REQUIRED_COLUMNS = ["To Do", "Close"];
 
-const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
+const TaskComponent = ({ workspaceCode, sprintId, tasks, setTasks }) => {
   const [isEditMode, setEditMode] = useState(false);
   const [selectedTicketId, setSelectedTicketId] = useState(null);
-  const [tasks, setTasks] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState(null);
   const [workspaceUsers, setWorkspaceUsers] = useState([]);
@@ -396,7 +395,6 @@ const TaskComponent = ({ workspaceCode, sprintId, currentUser }) => {
       </Modal>
     </DndProvider>
   );
-  
 };
 
 export default TaskComponent;

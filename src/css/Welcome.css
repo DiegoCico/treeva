@@ -1,0 +1,91 @@
+/* General Styling */
+.homepage-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #c1f0c1, #83c5be);
+    color: #2d4059;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .homepage-header {
+    padding: 20px;
+  }
+  
+  .homepage-logo {
+    height: 80px;
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  h1 {
+    font-size: 3rem;
+    color: #2d4059;
+    margin: 0.5em 0;
+  }
+  
+  .homepage-quote {
+    font-size: 1.2rem;
+    font-style: italic;
+    color: #3d5a80;
+    margin-bottom: 2rem;
+  }
+  
+  /* Nature Icons */
+  .nature-elements {
+    position: relative;
+    display: flex;
+    justify-content: space-around;
+    width: 80%;
+    max-width: 400px;
+    margin: 20px auto;
+  }
+  
+  .nature-icon {
+    font-size: 3rem;
+    color: #4b8e8d;
+    transition: transform 0.5s ease-in-out;
+  }
+  
+  .leaf-icon:hover { transform: rotate(-15deg) scale(1.1); color: #83c5be; }
+  .tree-icon:hover { transform: scale(1.2); color: #3a5a40; }
+  .water-icon:hover { transform: rotate(15deg) scale(1.1); color: #98c1d9; }
+  
+  /* Call-to-Action Buttons */
+  .cta-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  
+  .cta-button {
+    background-color: #2d4059;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  
+  .cta-button:hover {
+    background-color: #3d5a80;
+  }
+  
+  .cta-secondary {
+    background-color: #83c5be;
+    color: #2d4059;
+  }
+  
+  .cta-secondary:hover {
+    background-color: #98c1d9;
+  }
+  
