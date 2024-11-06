@@ -30,7 +30,7 @@ body.light-mode {
     gap: 15px;
   }
   
-  /* Analytics item styling */
+
   .analytics-item {
     display: flex;
     justify-content: space-between;
@@ -41,11 +41,11 @@ body.light-mode {
     cursor: pointer;
     transition: all 0.3s ease;
     overflow: hidden;
-    max-height: 80px; /* Initial collapsed height */
+    max-height: 80px;
   }
   
   .analytics-item.expanded {
-    max-height: 600px; /* Adjust as needed for expanded content */
+    max-height: 600px; 
     padding: 20px;
   }
   
