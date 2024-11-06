@@ -3,7 +3,9 @@ import { auth, db } from '../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc, getDoc, updateDoc, arrayUnion, collection, query, where, getDocs } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
+import { FaArrowLeft } from 'react-icons/fa';
 import '../css/Auth.css';
+import { Color } from 'three';
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -50,7 +52,6 @@ const Auth = () => {
     }
 
     try {
-      // Check if the workspace code is unique
       const workspaceQuery = query(collection(db, 'workspace'), where('__name__', '==', workspaceCode));
       const querySnapshot = await getDocs(workspaceQuery);
 
@@ -62,10 +63,9 @@ const Auth = () => {
       const user = auth.currentUser;
       await setDoc(doc(db, 'workspace', workspaceCode), {
         ownerId: user.uid,
-        members: [user.uid] // Add user as a member without name and role
+        members: [user.uid]
       });
 
-      // Add user details to 'users' collection
       await setDoc(doc(db, 'users', user.uid), {
         name,
         role,
@@ -87,12 +87,10 @@ const Auth = () => {
       if (workspaceDoc.exists()) {
         const user = auth.currentUser;
 
-        // Add the user to the 'members' array in the workspace document if not already present
         await updateDoc(workspaceDocRef, {
           members: arrayUnion(user.uid)
         });
 
-        // Add user details to 'users' collection
         await setDoc(doc(db, 'users', user.uid), {
           name,
           role,
@@ -116,6 +114,9 @@ const Auth = () => {
 
   return (
     <div className="auth-container">
+      <button className="back-button" onClick={() => navigate(-1)}>
+        <FaArrowLeft /> Back
+      </button>
       <div className="auth-header">
         <h2>{isLogin ? 'Login' : 'Sign Up'}</h2>
       </div>
