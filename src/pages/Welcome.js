@@ -1,42 +1,81 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import logo from '../logo.svg';
 import '../css/Welcome.css';
-import { FaLeaf, FaTree, FaWater } from 'react-icons/fa';
+import { FaLeaf, FaTree, FaSeedling } from 'react-icons/fa';
 
 const Welcome = () => {
   const [quote, setQuote] = useState('');
 
-  // Fetch a nature-themed quote or motivational quote
   useEffect(() => {
     const quotes = [
       "Nature does not hurry, yet everything is accomplished.",
-      "In nature, nothing is perfect, and everything is perfect.",
+      "Growth is a journey, let’s nurture it together.",
       "To walk in nature is to witness a thousand miracles.",
-      "Nature is not a place to visit. It is home.",
-      "Look deep into nature, and you will understand everything better."
+      "As trees grow, so do ideas and projects with time and care."
     ];
     setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
   }, []);
 
   return (
     <div className="homepage-container">
-      <header className="homepage-header">
-        <img src={logo} className="homepage-logo" alt="logo" />
-        <h1>Welcome to Treeva</h1>
-        <p className="homepage-quote">"{quote}"</p>
-      </header>
+      <section className="welcome-section fade-in">
+        <header className="homepage-header">
+          <img src={`${process.env.PUBLIC_URL}/logo.png`} className="homepage-logo" alt="Treeva Logo" />
+          <h1 className="slide-in">Welcome to Treeva</h1>
+          <p className="homepage-quote">{quote}</p>
+          <p>Treeva is where your team and projects grow, branch out, and flourish.</p>
+        </header>
+      </section>
 
-      <div className="nature-elements">
-        <FaLeaf className="nature-icon leaf-icon" />
-        <FaTree className="nature-icon tree-icon" />
-        <FaWater className="nature-icon water-icon" />
-      </div>
+      <section className="about-section slide-up">
+        <h2>About Treeva</h2>
+        <p>
+          At Treeva, we believe that projects, like trees, thrive with care and nurturing.
+          Our platform is designed to empower teams, streamline project management, and
+          foster growth in an environment inspired by nature’s elegance.
+        </p>
+      </section>
 
-      <div className="cta-buttons">
-        <Link to="/login" className="cta-button">Get Started</Link>
-        <Link to="/learn-more" className="cta-button cta-secondary">Learn More</Link>
-      </div>
+      <section className="productivity-section fade-in">
+        <h2>Grow Together with Treeva</h2>
+        <p>Teams using Treeva have reported:</p>
+        <ul>
+          <li><strong>30%</strong> improvement in productivity</li>
+          <li><strong>20%</strong> increase in team collaboration</li>
+          <li><strong>85%</strong> success in project completion</li>
+        </ul>
+        <p>Treeva helps you cultivate ideas, nourish projects, and track your growth.</p>
+      </section>
+
+      <section className="features-section zoom-in">
+        <h2>Our Core Features</h2>
+        <div className="features-grid">
+          <div className="feature scale-up">
+            <FaLeaf className="feature-icon bounce" />
+            <h3>Task Management</h3>
+            <p>Organize tasks and projects in a way that feels natural and intuitive.</p>
+          </div>
+          <div className="feature scale-up">
+            <FaTree className="feature-icon bounce" />
+            <h3>Team Collaboration</h3>
+            <p>Bring your team together and grow stronger, like branches on a tree.</p>
+          </div>
+          <div className="feature scale-up">
+            <FaSeedling className="feature-icon bounce" />
+            <h3>Growth Tracking</h3>
+            <p>Visualize your project’s progress and celebrate milestones along the way.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="cta-section slide-up">
+        <h2>Ready to Grow?</h2>
+        <p>Join Treeva and start nurturing your team's projects to new heights.</p>
+        <div className="cta-buttons">
+          <Link to="/login" className="cta-button pulse">Get Started</Link>
+          <Link to="/learn-more" className="cta-button cta-secondary pulse">Learn More</Link>
+        </div>
+      </section>
     </div>
   );
 };
